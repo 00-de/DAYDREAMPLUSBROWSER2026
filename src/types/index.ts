@@ -45,3 +45,27 @@ export interface CheckItem {
   status: 'ok' | 'ng' | 'wait';
   detail: string;
 }
+
+/** ホーム画面・Dock に並ぶツール */
+export interface Tool {
+  id: string;
+  name: string;
+  category: 'ai' | 'dev' | 'daydream' | 'media' | 'sns';
+  /** 表示する記号（絵文字または1文字） */
+  icon: string;
+  /** Tailwind のグラデーション指定 */
+  color: string;
+  /** 空文字の場合は「準備中」として扱います */
+  url: string;
+}
+
+/** 通知エリアに出す1件 */
+export interface Notice {
+  id: string;
+  type: 'info' | 'warn' | 'task';
+  title: string;
+  detail: string;
+}
+
+/** 画面の切り替え */
+export type ViewName = 'home' | 'check';

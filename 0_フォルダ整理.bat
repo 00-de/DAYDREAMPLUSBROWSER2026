@@ -17,23 +17,31 @@ if not exist "src\lib"         mkdir "src\lib"
 if not exist "src\types"       mkdir "src\types"
 
 rem --- electron フォルダへ ---
-if exist "main.cjs"       move /y "main.cjs"       "electron\" >nul
-if exist "preload.cjs"    move /y "preload.cjs"    "electron\" >nul
+if exist "main.cjs"           move /y "main.cjs"           "electron\" >nul
+if exist "preload.cjs"        move /y "preload.cjs"        "electron\" >nul
 
 rem --- src フォルダへ ---
-if exist "main.tsx"       move /y "main.tsx"       "src\" >nul
-if exist "App.tsx"        move /y "App.tsx"        "src\" >nul
-if exist "index.css"      move /y "index.css"      "src\" >nul
-if exist "vite-env.d.ts"  move /y "vite-env.d.ts"  "src\" >nul
+if exist "main.tsx"           move /y "main.tsx"           "src\" >nul
+if exist "App.tsx"            move /y "App.tsx"            "src\" >nul
+if exist "index.css"          move /y "index.css"          "src\" >nul
+if exist "vite-env.d.ts"      move /y "vite-env.d.ts"      "src\" >nul
 
 rem --- src\components フォルダへ ---
-if exist "TitleBar.tsx"   move /y "TitleBar.tsx"   "src\components\" >nul
+if exist "TitleBar.tsx"       move /y "TitleBar.tsx"       "src\components\" >nul
+if exist "Home.tsx"           move /y "Home.tsx"           "src\components\" >nul
+if exist "Clock.tsx"          move /y "Clock.tsx"          "src\components\" >nul
+if exist "SearchBar.tsx"      move /y "SearchBar.tsx"      "src\components\" >nul
+if exist "ToolTile.tsx"       move /y "ToolTile.tsx"       "src\components\" >nul
+if exist "NoticePanel.tsx"    move /y "NoticePanel.tsx"    "src\components\" >nul
+if exist "StartupCheck.tsx"   move /y "StartupCheck.tsx"   "src\components\" >nul
 
 rem --- src\lib フォルダへ ---
-if exist "firebase.ts"    move /y "firebase.ts"    "src\lib\" >nul
+if exist "firebase.ts"        move /y "firebase.ts"        "src\lib\" >nul
+if exist "tools.ts"           move /y "tools.ts"           "src\lib\" >nul
+if exist "storage.ts"         move /y "storage.ts"         "src\lib\" >nul
 
 rem --- src\types フォルダへ ---
-if exist "index.ts"       move /y "index.ts"       "src\types\" >nul
+if exist "index.ts"           move /y "index.ts"           "src\types\" >nul
 
 echo  移動が終わりました。確認します。
 echo.
@@ -56,14 +64,22 @@ call :CHECK "src\App.tsx"
 call :CHECK "src\index.css"
 call :CHECK "src\vite-env.d.ts"
 call :CHECK "src\components\TitleBar.tsx"
+call :CHECK "src\components\Home.tsx"
+call :CHECK "src\components\Clock.tsx"
+call :CHECK "src\components\SearchBar.tsx"
+call :CHECK "src\components\ToolTile.tsx"
+call :CHECK "src\components\NoticePanel.tsx"
+call :CHECK "src\components\StartupCheck.tsx"
 call :CHECK "src\lib\firebase.ts"
+call :CHECK "src\lib\tools.ts"
+call :CHECK "src\lib\storage.ts"
 call :CHECK "src\types\index.ts"
 
 echo.
 if %NG%==0 (
   echo ============================================================
   echo  すべて正しい場所にあります。
-  echo  次は「1_セットアップ.bat」をダブルクリックしてください。
+  echo  次は「2_開発起動.bat」をダブルクリックしてください。
   echo ============================================================
 ) else (
   echo ============================================================

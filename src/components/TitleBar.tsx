@@ -4,12 +4,24 @@
  * ------------------------------------------------------------
  *  frame:false にしているため、最小化・最大化・閉じるを
  *  自分で用意する必要があります。
+ *  画面の切り替えタブもここに置いています。
  * ============================================================
  */
 
 import { useEffect, useState } from 'react';
+import type { ViewName } from '../types';
 
-export default function TitleBar() {
+interface Props {
+  view: ViewName;
+  onChangeView: (v: ViewName) => void;
+}
+
+const TABS: { id: ViewName; label: string }[] = [
+  { id: 'home', label: 'ホーム' },
+  { id: 'check', label: '起動チェック' },
+];
+
+export default function TitleBar({ view, onChangeView }: Props) {
   const [maximized, setMaximized] = useState(false);
   const bridge = window.dd;
 
@@ -29,13 +41,28 @@ export default function TitleBar() {
         <div className="grid h-6 w-6 place-items-center rounded-md bg-gradient-to-br from-dd-accent to-dd-accent2 text-[13px]">
           ✦
         </div>
-        <span className="text-[12.5px] font-bold tracking-wide">
-          DayDream Browser Ultimate
-        </span>
+        <span className="text-[12.5px] font-bold tracking-wide">DayDream Browser Ultimate</span>
         <span className="rounded-full border border-white/10 px-2 py-[1px] text-[9.5px] text-dd-muted">
           Ver.1.0 開発版
         </span>
       </div>
+
+      {/* 画面切り替えタブ */}
+      <nav className="no-drag ml-3 flex items-center gap-1">
+        {TABS.map((t) => (
+          <button
+            key={t.id}
+            onClick={() => onChangeView(t.id)}
+            className={`rounded-lg px-3 py-1 text-[11.5px] transition ${
+              view === t.id
+                ? 'bg-white/[0.12] text-dd-text'
+                : 'text-dd-muted hover:bg-white/[0.07] hover:text-dd-text'
+            }`}
+          >
+            {t.label}
+          </button>
+        ))}
+      </nav>
 
       <div className="flex-1" />
 
