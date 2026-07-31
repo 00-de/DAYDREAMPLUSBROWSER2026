@@ -1,0 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    @apply bg-dd-bg text-dd-text font-sans antialiased overflow-hidden;
+    background-image:
+      radial-gradient(1200px 700px at 10% -10%, #21306b 0%, transparent 60%),
+      radial-gradient(900px 600px at 100% 0%, #4a2273 0%, transparent 55%);
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply rounded-lg;
+    background: rgba(255, 255, 255, 0.14);
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
+
+@layer components {
+  /* ガラス調パネル */
+  .glass {
+    @apply border border-white/10 bg-white/[0.06] backdrop-blur-[18px];
+  }
+
+  /* ドラッグでウィンドウを動かせる領域 */
+  .drag-region {
+    -webkit-app-region: drag;
+  }
+  .no-drag {
+    -webkit-app-region: no-drag;
+  }
+}
