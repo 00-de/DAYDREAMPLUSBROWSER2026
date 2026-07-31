@@ -1,40 +1,40 @@
 @echo off
-chcp 65001 > nul
-title DayDream Browser Ultimate - ã‚³ãƒ¼ãƒ‰æ¤œæŸ»
+title DayDream Browser Ultimate - ƒR[ƒhŒŸ¸
 cd /d "%~dp0"
 
 if not exist "node_modules" (
-    echo [ã‚¨ãƒ©ãƒ¼] å…ˆã«ã€Œ1_ã‚»ãƒƒãƒˆã‚¢ãƒƒãƒ—.batã€ã‚’å®Ÿè¡Œã—ã¦ãã ã•ã„ã€‚
+    echo [ƒGƒ‰[] æ‚Éu1_ƒZƒbƒgƒAƒbƒv.batv‚ğÀs‚µ‚Ä‚­‚¾‚³‚¢B
+    echo.
     pause
     exit /b 1
 )
 
 echo ============================================================
-echo  TypeScript ã¨ ESLint ã§ã‚³ãƒ¼ãƒ‰ã‚’æ¤œæŸ»ã—ã¾ã™ã€‚
+echo  TypeScript ‚Æ ESLint ‚ÅƒR[ƒh‚ğŒŸ¸‚µ‚Ü‚·B
 echo ============================================================
 echo.
 
-echo [1/2] ESLint æ¤œæŸ»ä¸­...
+echo [1/2] ESLint ŒŸ¸’†...
 call npm run lint
-if errorlevel 1 goto failed
+if errorlevel 1 goto FAILED
 
 echo.
-echo [2/2] TypeScript å‹ãƒã‚§ãƒƒã‚¯ãƒ»ãƒ“ãƒ«ãƒ‰ä¸­...
+echo [2/2] TypeScript Œ^ƒ`ƒFƒbƒNEƒrƒ‹ƒh’†...
 call npm run build
-if errorlevel 1 goto failed
+if errorlevel 1 goto FAILED
 
 echo.
 echo ============================================================
-echo  å•é¡Œã¯è¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã§ã—ãŸã€‚
+echo  –â‘è‚ÍŒ©‚Â‚©‚è‚Ü‚¹‚ñ‚Å‚µ‚½B
 echo ============================================================
 echo.
 pause
 exit /b 0
 
-:failed
+:FAILED
 echo.
 echo ============================================================
-echo  ã‚¨ãƒ©ãƒ¼ãŒè¦‹ã¤ã‹ã‚Šã¾ã—ãŸã€‚ä¸Šã®å†…å®¹ã‚’ã”ç¢ºèªãã ã•ã„ã€‚
+echo  ƒGƒ‰[‚ªŒ©‚Â‚©‚è‚Ü‚µ‚½Bã‚Ì“à—e‚ğ‚²Šm”F‚­‚¾‚³‚¢B
 echo ============================================================
 echo.
 pause

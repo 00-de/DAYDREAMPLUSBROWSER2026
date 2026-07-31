@@ -1,36 +1,44 @@
 @echo off
-chcp 65001 > nul
-title DayDream Browser Ultimate - ã‚»ãƒƒãƒˆã‚¢ãƒƒãƒ—
+title DayDream Browser Ultimate - ƒZƒbƒgƒAƒbƒv
 cd /d "%~dp0"
 
 echo ============================================================
-echo  DayDream Browser Ultimate  ã‚»ãƒƒãƒˆã‚¢ãƒƒãƒ—
+echo  DayDream Browser Ultimate  ƒZƒbƒgƒAƒbƒv
 echo ============================================================
 echo.
 
-where node >nul 2>nul
-if errorlevel 1 (
-    echo [ã‚¨ãƒ©ãƒ¼] Node.js ãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã€‚
+if not exist "src\App.tsx" (
+    echo [ƒGƒ‰[] ƒtƒHƒ‹ƒ_\¬‚ª³‚µ‚­‚ ‚è‚Ü‚¹‚ñB
     echo.
-    echo  https://nodejs.org/ja ã‹ã‚‰ LTSç‰ˆ ã‚’ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰ã—ã€
-    echo  ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«ã—ã¦ã‹ã‚‰ã€ã‚‚ã†ä¸€åº¦ã“ã®ãƒ•ã‚¡ã‚¤ãƒ«ã‚’å®Ÿè¡Œã—ã¦ãã ã•ã„ã€‚
+    echo  æ‚Éu0_ƒtƒHƒ‹ƒ_®—.batv‚ðƒ_ƒuƒ‹ƒNƒŠƒbƒN‚µ‚Ä‚­‚¾‚³‚¢B
     echo.
     pause
     exit /b 1
 )
 
-for /f "delims=" %%v in ('node -v') do echo  Node.js %%v ã‚’ç¢ºèªã—ã¾ã—ãŸã€‚
+where node >nul 2>nul
+if errorlevel 1 (
+    echo [ƒGƒ‰[] Node.js ‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñB
+    echo.
+    echo  https://nodejs.org/ja ‚©‚ç LTS”Å ‚ðƒ_ƒEƒ“ƒ[ƒh‚µA
+    echo  ƒCƒ“ƒXƒg[ƒ‹‚µ‚Ä‚©‚çA‚à‚¤ˆê“x‚±‚Ìƒtƒ@ƒCƒ‹‚ðŽÀs‚µ‚Ä‚­‚¾‚³‚¢B
+    echo.
+    pause
+    exit /b 1
+)
+
+for /f "delims=" %%v in ('node -v') do echo  Node.js %%v ‚ðŠm”F‚µ‚Ü‚µ‚½B
 echo.
-echo  å¿…è¦ãªéƒ¨å“ã‚’ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰ã—ã¾ã™ã€‚
-echo  åˆå›žã¯ 5 åˆ†ã»ã©ã‹ã‹ã‚Šã¾ã™ã€‚ãã®ã¾ã¾ãŠå¾…ã¡ãã ã•ã„ã€‚
+echo  •K—v‚È•”•i‚ðƒ_ƒEƒ“ƒ[ƒh‚µ‚Ü‚·B
+echo  ‰‰ñ‚Í 5 •ª‚Ù‚Ç‚©‚©‚è‚Ü‚·B‚»‚Ì‚Ü‚Ü‚¨‘Ò‚¿‚­‚¾‚³‚¢B
 echo.
 
 call npm install --no-audit --no-fund
 
 if errorlevel 1 (
     echo.
-    echo [ã‚¨ãƒ©ãƒ¼] ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«ã«å¤±æ•—ã—ã¾ã—ãŸã€‚
-    echo  ã‚¤ãƒ³ã‚¿ãƒ¼ãƒãƒƒãƒˆæŽ¥ç¶šã‚’ç¢ºèªã—ã¦ã€ã‚‚ã†ä¸€åº¦ãŠè©¦ã—ãã ã•ã„ã€‚
+    echo [ƒGƒ‰[] ƒCƒ“ƒXƒg[ƒ‹‚ÉŽ¸”s‚µ‚Ü‚µ‚½B
+    echo  ƒCƒ“ƒ^[ƒlƒbƒgÚ‘±‚ðŠm”F‚µ‚ÄA‚à‚¤ˆê“x‚¨ŽŽ‚µ‚­‚¾‚³‚¢B
     echo.
     pause
     exit /b 1
@@ -38,8 +46,8 @@ if errorlevel 1 (
 
 echo.
 echo ============================================================
-echo  ã‚»ãƒƒãƒˆã‚¢ãƒƒãƒ—ãŒå®Œäº†ã—ã¾ã—ãŸã€‚
-echo  æ¬¡ã¯ã€Œ2_é–‹ç™ºèµ·å‹•.batã€ã‚’ãƒ€ãƒ–ãƒ«ã‚¯ãƒªãƒƒã‚¯ã—ã¦ãã ã•ã„ã€‚
+echo  ƒZƒbƒgƒAƒbƒv‚ªŠ®—¹‚µ‚Ü‚µ‚½B
+echo  ŽŸ‚Íu2_ŠJ”­‹N“®.batv‚ðƒ_ƒuƒ‹ƒNƒŠƒbƒN‚µ‚Ä‚­‚¾‚³‚¢B
 echo ============================================================
 echo.
 pause
