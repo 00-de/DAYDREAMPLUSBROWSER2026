@@ -15,6 +15,7 @@ if not exist "src"             mkdir "src"
 if not exist "src\components"  mkdir "src\components"
 if not exist "src\lib"         mkdir "src\lib"
 if not exist "src\types"       mkdir "src\types"
+if not exist "src\hooks"       mkdir "src\hooks"
 
 rem --- electron フォルダへ ---
 if exist "main.cjs"           move /y "main.cjs"           "electron\" >nul
@@ -34,11 +35,16 @@ if exist "SearchBar.tsx"      move /y "SearchBar.tsx"      "src\components\" >nu
 if exist "ToolTile.tsx"       move /y "ToolTile.tsx"       "src\components\" >nul
 if exist "NoticePanel.tsx"    move /y "NoticePanel.tsx"    "src\components\" >nul
 if exist "StartupCheck.tsx"   move /y "StartupCheck.tsx"   "src\components\" >nul
+if exist "Workspace.tsx"      move /y "Workspace.tsx"      "src\components\" >nul
+if exist "PaneWindow.tsx"     move /y "PaneWindow.tsx"     "src\components\" >nul
 
 rem --- src\lib フォルダへ ---
 if exist "firebase.ts"        move /y "firebase.ts"        "src\lib\" >nul
 if exist "tools.ts"           move /y "tools.ts"           "src\lib\" >nul
 if exist "storage.ts"         move /y "storage.ts"         "src\lib\" >nul
+
+rem --- src\hooks フォルダへ ---
+if exist "useWorkspace.ts"    move /y "useWorkspace.ts"    "src\hooks\" >nul
 
 rem --- src\types フォルダへ ---
 if exist "index.ts"           move /y "index.ts"           "src\types\" >nul
@@ -70,6 +76,9 @@ call :CHECK "src\components\SearchBar.tsx"
 call :CHECK "src\components\ToolTile.tsx"
 call :CHECK "src\components\NoticePanel.tsx"
 call :CHECK "src\components\StartupCheck.tsx"
+call :CHECK "src\components\Workspace.tsx"
+call :CHECK "src\components\PaneWindow.tsx"
+call :CHECK "src\hooks\useWorkspace.ts"
 call :CHECK "src\lib\firebase.ts"
 call :CHECK "src\lib\tools.ts"
 call :CHECK "src\lib\storage.ts"

@@ -18,6 +18,7 @@ interface Props {
 
 const TABS: { id: ViewName; label: string }[] = [
   { id: 'home', label: 'ホーム' },
+  { id: 'workspace', label: 'Workspace' },
   { id: 'check', label: '起動チェック' },
 ];
 

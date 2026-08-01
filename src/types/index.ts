@@ -68,4 +68,45 @@ export interface Notice {
 }
 
 /** 画面の切り替え */
-export type ViewName = 'home' | 'check';
+export type ViewName = 'home' | 'workspace' | 'check';
+
+/* ============================================================
+   Workspace 関連
+   ============================================================ */
+
+/** アプリ内に浮かぶウィンドウ1枚 */
+export interface Pane {
+  id: string;
+  /** 起動元のツールID（tools.ts の id） */
+  toolId: string;
+  title: string;
+  url: string;
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  /** 重なり順 */
+  z: number;
+  minimized: boolean;
+  maximized: boolean;
+}
+
+/** 保存できるレイアウト1件 */
+export interface Layout {
+  id: string;
+  name: string;
+  panes: Pane[];
+  updatedAt: number;
+}
+
+/** スナップの配置位置 */
+export type SnapZone =
+  | 'left'
+  | 'right'
+  | 'top'
+  | 'bottom'
+  | 'topLeft'
+  | 'topRight'
+  | 'bottomLeft'
+  | 'bottomRight'
+  | 'full';
