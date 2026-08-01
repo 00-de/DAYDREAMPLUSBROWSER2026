@@ -16,7 +16,12 @@ import { CATEGORIES, DEFAULT_FAVORITES, TOOLS, findTool } from '../lib/tools';
 import { loadLocal, pushRecent, saveLocal } from '../lib/storage';
 import type { Tool } from '../types';
 
-export default function Home() {
+interface Props {
+  /** アプリ内のブラウザ画面でタブを開く */
+  onOpenInApp: (tool: Tool) => void;
+}
+
+export default function Home({ onOpenInApp }: Props) {
   const [favorites, setFavorites] = useState<string[]>([]);
   const [recents, setRecents] = useState<string[]>([]);
   const [category, setCategory] = useState<string>('all');
@@ -28,14 +33,28 @@ export default function Home() {
     setRecents(loadLocal<string[]>('recents', []));
   }, []);
 
-  /* ツールを開く */
-  const openTool = useCallback((tool: Tool) => {
-    if (!tool.url) return;
-    window.dd?.shell.openExternal(tool.url);
-    setRecents((prev) => pushRecent(prev, tool.id));
-    setMessage(`${tool.name} を開きました`);
-    setTimeout(() => setMessage(''), 2200);
-  }, []);
+  /**
+   * ツールを開きます。
+   * 通常クリック    → アプリ内のタブで開く
+   * Shift + クリック → 既定のブラウザで開く
+   */
+  const openTool = useCallback(
+    (tool: Tool, external?: boolean) => {
+      if (!tool.url) return;
+
+      if (external) {
+        window.dd?.shell.openExternal(tool.url);
+        setMessage(`${tool.name} をブラウザで開きました`);
+      } else {
+        onOpenInApp(tool);
+        setMessage(`${tool.name} をタブで開きました`);
+      }
+
+      setRecents((prev) => pushRecent(prev, tool.id));
+      setTimeout(() => setMessage(''), 2200);
+    },
+    [onOpenInApp],
+  );
 
   /* お気に入りの切り替え */
   const toggleFavorite = useCallback((id: string) => {
@@ -163,6 +182,7 @@ export default function Home() {
             <h2 className="mb-3 flex items-center gap-2 text-[12px] font-bold text-dd-muted">
               <span>すべてのツール</span>
               <span className="h-px flex-1 bg-white/10" />
+              <span className="text-[10px]">Shift + クリックでブラウザ</span>
             </h2>
 
             <div className="mb-4 flex flex-wrap gap-1.5">

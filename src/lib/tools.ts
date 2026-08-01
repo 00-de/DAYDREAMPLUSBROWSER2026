@@ -34,6 +34,7 @@ export const TOOLS: Tool[] = [
 
   /* ---------- DayDream ---------- */
   { id: 'ddsite',   name: 'ファンサイト',   category: 'daydream', icon: '★', color: 'from-[#5b8cff] to-[#a06bff]', url: 'https://daydreamplusfunsite-2026.vercel.app' },
+  { id: 'ddadmin',  name: '管理システム',   category: 'daydream', icon: '⚙', color: 'from-[#a06bff] to-[#5b8cff]', url: 'https://daysreamplussystem-2026.vercel.app/' },
   { id: 'ddchat',   name: 'DDCHAT',        category: 'daydream', icon: '✉', color: 'from-[#5b8cff] to-[#7c3aed]', url: '' },
   { id: 'ddmail',   name: 'DayDream Mail', category: 'daydream', icon: '✎', color: 'from-[#6366f1] to-[#a06bff]', url: '' },
   { id: 'ddlottery',name: '抽選アプリ',     category: 'daydream', icon: '◎', color: 'from-[#ec4899] to-[#be185d]', url: '' },

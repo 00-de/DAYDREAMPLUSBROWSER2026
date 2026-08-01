@@ -15,7 +15,12 @@ import type { Tab, Tool } from '../types';
 
 const uid = () => 't' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 
-export default function Browser() {
+interface Props {
+  /** 外から「このツールを開いて」と指示するための受け口 */
+  request?: { tool: Tool; nonce: number } | null;
+}
+
+export default function Browser({ request }: Props) {
   const [tabs, setTabs] = useState<Tab[]>(() => loadLocal<Tab[]>('tabs', []));
   const [activeId, setActiveId] = useState<string | null>(null);
   const [picker, setPicker] = useState(false);
@@ -25,6 +30,7 @@ export default function Browser() {
     nonce: number;
   } | null>(null);
   const closedStack = useRef<Tab[]>([]);
+  const openTabRef = useRef<(tool: Tool) => void>(() => {});
 
   /* 起動時に、保存済みタブの先頭を選ぶ */
   useEffect(() => {
@@ -37,6 +43,14 @@ export default function Browser() {
   useEffect(() => {
     saveLocal('tabs', tabs);
   }, [tabs]);
+
+  /* ホーム画面などから開くよう指示されたとき */
+  useEffect(() => {
+    if (!request) return;
+    openTabRef.current(request.tool);
+    // nonce が変わるたびに1回だけ実行します
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [request?.nonce]);
 
   const active = tabs.find((t) => t.id === activeId) ?? null;
 
@@ -68,6 +82,8 @@ export default function Browser() {
     });
     setPicker(false);
   }, []);
+
+  openTabRef.current = openTab;
 
   const closeTab = useCallback(
     (id: string) => {

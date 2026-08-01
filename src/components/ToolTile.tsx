@@ -9,7 +9,7 @@ import type { Tool } from '../types';
 interface Props {
   tool: Tool;
   isFavorite: boolean;
-  onOpen: (tool: Tool) => void;
+  onOpen: (tool: Tool, external?: boolean) => void;
   onToggleFavorite: (id: string) => void;
   /** 小さめ表示にするか */
   compact?: boolean;
@@ -21,9 +21,9 @@ export default function ToolTile({ tool, isFavorite, onOpen, onToggleFavorite, c
   return (
     <div className="group relative">
       <button
-        onClick={() => onOpen(tool)}
+        onClick={(e) => onOpen(tool, e.shiftKey)}
         disabled={!ready}
-        title={ready ? tool.url : '準備中です'}
+        title={ready ? `${tool.url}\n（Shift + クリックでブラウザ）` : '準備中です'}
         className={`flex w-full flex-col items-center gap-2 rounded-2xl border border-white/10 bg-white/[0.05] transition
           ${compact ? 'px-2 py-3' : 'px-3 py-4'}
           ${ready ? 'hover:-translate-y-0.5 hover:border-white/20 hover:bg-white/[0.1]' : 'cursor-not-allowed opacity-40'}`}
