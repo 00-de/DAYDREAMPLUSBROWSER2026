@@ -68,7 +68,7 @@ export interface Notice {
 }
 
 /** 画面の切り替え */
-export type ViewName = 'home' | 'workspace' | 'check';
+export type ViewName = 'home' | 'browser' | 'workspace' | 'check';
 
 /* ============================================================
    Workspace 関連
@@ -81,6 +81,10 @@ export interface Pane {
   toolId: string;
   title: string;
   url: string;
+  /** このウィンドウの中のタブ */
+  tabs?: Tab[];
+  /** 選択中のタブ */
+  activeTabId?: string;
   x: number;
   y: number;
   w: number;
@@ -110,3 +114,16 @@ export type SnapZone =
   | 'bottomLeft'
   | 'bottomRight'
   | 'full';
+
+/* ============================================================
+   Browser（タブ）関連
+   ============================================================ */
+
+/** ブラウザのタブ1枚 */
+export interface Tab {
+  id: string;
+  toolId: string;
+  title: string;
+  url: string;
+  loading: boolean;
+}

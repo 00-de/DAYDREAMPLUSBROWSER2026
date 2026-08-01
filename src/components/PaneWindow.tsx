@@ -5,13 +5,15 @@
  *  ・タイトルバーをつかんで移動
  *  ・8方向の端をつかんでサイズ変更
  *  ・画面端に寄せるとスナップ配置
+ *  ・ウィンドウの中にタブを持てます
  * ============================================================
  */
 
 import { useCallback, useEffect, useRef, useState } from 'react';
+import WebFrame from './WebFrame';
 import { MIN_H, MIN_W } from '../hooks/useWorkspace';
-import { findTool } from '../lib/tools';
-import type { Pane, SnapZone } from '../types';
+import { TOOLS, findTool } from '../lib/tools';
+import type { Pane, SnapZone, Tab, Tool } from '../types';
 
 interface Props {
   pane: Pane;
@@ -21,11 +23,13 @@ interface Props {
   onUpdate: (id: string, patch: Partial<Pane>) => void;
   onClose: (id: string) => void;
   onSnap: (id: string, zone: SnapZone) => void;
-  /** ドラッグ中にスナップ候補を親へ知らせる */
   onSnapHint: (zone: SnapZone | null) => void;
+  onAddTab: (paneId: string, tool: Tool) => void;
+  onSelectTab: (paneId: string, tabId: string) => void;
+  onCloseTab: (paneId: string, tabId: string) => void;
+  onUpdateTab: (paneId: string, tabId: string, patch: Partial<Tab>) => void;
 }
 
-/** 端をつかむ向き */
 type Dir = 'n' | 's' | 'e' | 'w' | 'ne' | 'nw' | 'se' | 'sw';
 
 /** 画面端から何ピクセル以内でスナップ判定するか */
@@ -40,15 +44,27 @@ export default function PaneWindow({
   onClose,
   onSnap,
   onSnapHint,
+  onAddTab,
+  onSelectTab,
+  onCloseTab,
+  onUpdateTab,
 }: Props) {
   const [dragging, setDragging] = useState(false);
   const [resizing, setResizing] = useState<Dir | null>(null);
+  const [picker, setPicker] = useState(false);
+  const [command, setCommand] = useState<{ type: 'back' | 'forward' | 'reload'; nonce: number } | null>(null);
   const start = useRef({ mx: 0, my: 0, x: 0, y: 0, w: 0, h: 0 });
   const beforeMax = useRef<{ x: number; y: number; w: number; h: number } | null>(null);
 
-  const tool = findTool(pane.toolId);
+  /* 古い保存データにタブが無い場合の保険 */
+  const tabs: Tab[] =
+    pane.tabs && pane.tabs.length > 0
+      ? pane.tabs
+      : [{ id: pane.id + '-t0', toolId: pane.toolId, title: pane.title, url: pane.url, loading: false }];
+  const activeTabId = pane.activeTabId ?? tabs[0].id;
+  const activeTab = tabs.find((t) => t.id === activeTabId) ?? tabs[0];
 
-  /* ---------- マウス位置からスナップ位置を判定 ---------- */
+  /* ---------- スナップ判定 ---------- */
   const detectZone = useCallback(
     (mx: number, my: number): SnapZone | null => {
       const nearL = mx < EDGE;
@@ -69,7 +85,6 @@ export default function PaneWindow({
     [container],
   );
 
-  /* ---------- 移動 ---------- */
   const beginDrag = (e: React.MouseEvent) => {
     if (pane.maximized) return;
     e.preventDefault();
@@ -78,7 +93,6 @@ export default function PaneWindow({
     setDragging(true);
   };
 
-  /* ---------- サイズ変更 ---------- */
   const beginResize = (e: React.MouseEvent, dir: Dir) => {
     e.preventDefault();
     e.stopPropagation();
@@ -87,7 +101,7 @@ export default function PaneWindow({
     setResizing(dir);
   };
 
-  /* ---------- マウス操作の共通処理 ---------- */
+  /* ---------- マウス操作 ---------- */
   useEffect(() => {
     if (!dragging && !resizing) return;
 
@@ -101,7 +115,6 @@ export default function PaneWindow({
         const ny = Math.max(0, Math.min(container.h - 36, s.y + dy));
         onUpdate(pane.id, { x: nx, y: ny });
 
-        // 親要素の左上を基準にした座標でスナップ判定
         const host = document.getElementById('ws-canvas');
         if (host) {
           const r = host.getBoundingClientRect();
@@ -112,7 +125,6 @@ export default function PaneWindow({
 
       if (resizing) {
         let { x, y, w, h } = s;
-
         if (resizing.includes('e')) w = Math.max(MIN_W, s.w + dx);
         if (resizing.includes('s')) h = Math.max(MIN_H, s.h + dy);
         if (resizing.includes('w')) {
@@ -123,7 +135,6 @@ export default function PaneWindow({
           h = Math.max(MIN_H, s.h - dy);
           y = s.y + (s.h - h);
         }
-
         onUpdate(pane.id, { x, y, w, h, maximized: false });
       }
     };
@@ -150,23 +161,20 @@ export default function PaneWindow({
     };
   }, [dragging, resizing, container, pane.id, onUpdate, onSnap, onSnapHint, detectZone]);
 
-  /* ---------- 最大化の切り替え ---------- */
   const toggleMax = () => {
     if (pane.maximized) {
       const b = beforeMax.current;
-      onUpdate(pane.id, {
-        maximized: false,
-        ...(b ?? { x: 40, y: 40, w: 520, h: 380 }),
-      });
+      onUpdate(pane.id, { maximized: false, ...(b ?? { x: 40, y: 40, w: 560, h: 420 }) });
     } else {
       beforeMax.current = { x: pane.x, y: pane.y, w: pane.w, h: pane.h };
       onUpdate(pane.id, { maximized: true, x: 0, y: 0, w: container.w, h: container.h });
     }
   };
 
+  const send = (type: 'back' | 'forward' | 'reload') => setCommand({ type, nonce: Date.now() });
+
   if (pane.minimized) return null;
 
-  /* 端をつかむ領域の定義 */
   const handles: { dir: Dir; className: string }[] = [
     { dir: 'n',  className: 'left-2 right-2 top-0 h-1.5 cursor-ns-resize' },
     { dir: 's',  className: 'left-2 right-2 bottom-0 h-1.5 cursor-ns-resize' },
@@ -178,103 +186,201 @@ export default function PaneWindow({
     { dir: 'se', className: 'bottom-0 right-0 h-3 w-3 cursor-nwse-resize' },
   ];
 
+  /* ドラッグ中は webview を隠す（マウス操作を奪われないように） */
+  const busy = dragging || !!resizing;
+
   return (
     <div
       onMouseDown={() => onFocus(pane.id)}
       style={{ left: pane.x, top: pane.y, width: pane.w, height: pane.h, zIndex: pane.z }}
-      className={`absolute flex flex-col overflow-hidden rounded-xl border backdrop-blur-[18px] transition-shadow
+      className={`absolute flex flex-col overflow-hidden rounded-xl border backdrop-blur-[18px]
         ${isActive
           ? 'border-dd-accent/50 bg-dd-panel/95 shadow-[0_14px_50px_rgba(0,0,0,.55)]'
-          : 'border-white/10 bg-dd-panel/80 shadow-[0_6px_24px_rgba(0,0,0,.4)]'}
-        ${dragging || resizing ? 'select-none' : ''}`}
+          : 'border-white/10 bg-dd-panel/85 shadow-[0_6px_24px_rgba(0,0,0,.4)]'}
+        ${busy ? 'select-none' : ''}`}
     >
       {/* ---------- タイトルバー ---------- */}
       <div
         onMouseDown={beginDrag}
         onDoubleClick={toggleMax}
-        className={`flex h-9 flex-none items-center gap-2 border-b border-white/10 px-2.5 ${
+        className={`flex h-8 flex-none items-center gap-1.5 border-b border-white/10 px-2 ${
           pane.maximized ? '' : 'cursor-move'
         }`}
       >
-        <span
-          className={`grid h-5 w-5 flex-none place-items-center rounded-md bg-gradient-to-br text-[10px] text-white ${
-            tool?.color ?? 'from-dd-accent to-dd-accent2'
-          }`}
-        >
-          {tool?.icon ?? '□'}
-        </span>
-
-        <span className="min-w-0 flex-1 truncate text-[11.5px] font-semibold">{pane.title}</span>
-
-        <div className="flex flex-none items-center">
+        {/* 戻る・進む・再読込 */}
+        <div className="flex flex-none items-center" onMouseDown={(e) => e.stopPropagation()}>
           <button
-            onMouseDown={(e) => e.stopPropagation()}
+            onClick={() => send('back')}
+            title="戻る"
+            className="grid h-5 w-5 place-items-center rounded text-[11px] text-dd-muted transition hover:bg-white/10 hover:text-dd-text"
+          >
+            ←
+          </button>
+          <button
+            onClick={() => send('forward')}
+            title="進む"
+            className="grid h-5 w-5 place-items-center rounded text-[11px] text-dd-muted transition hover:bg-white/10 hover:text-dd-text"
+          >
+            →
+          </button>
+          <button
+            onClick={() => send('reload')}
+            title="再読み込み"
+            className="grid h-5 w-5 place-items-center rounded text-[10px] text-dd-muted transition hover:bg-white/10 hover:text-dd-text"
+          >
+            ↻
+          </button>
+        </div>
+
+        <span className="min-w-0 flex-1 truncate text-[11px] font-semibold">{activeTab.title}</span>
+
+        <div className="flex flex-none items-center" onMouseDown={(e) => e.stopPropagation()}>
+          <button
+            onClick={() => window.dd?.shell.openExternal(activeTab.url)}
+            title="既定のブラウザで開く"
+            className="grid h-6 w-6 place-items-center rounded text-[10px] text-dd-muted transition hover:bg-white/10 hover:text-dd-text"
+          >
+            ↗
+          </button>
+          <button
             onClick={() => onUpdate(pane.id, { minimized: true })}
             title="最小化"
-            className="grid h-6 w-7 place-items-center rounded text-[11px] text-dd-muted transition hover:bg-white/10 hover:text-dd-text"
+            className="grid h-6 w-6 place-items-center rounded text-[11px] text-dd-muted transition hover:bg-white/10 hover:text-dd-text"
           >
             ─
           </button>
           <button
-            onMouseDown={(e) => e.stopPropagation()}
             onClick={toggleMax}
             title={pane.maximized ? '元のサイズに戻す' : '最大化'}
-            className="grid h-6 w-7 place-items-center rounded text-[11px] text-dd-muted transition hover:bg-white/10 hover:text-dd-text"
+            className="grid h-6 w-6 place-items-center rounded text-[11px] text-dd-muted transition hover:bg-white/10 hover:text-dd-text"
           >
             {pane.maximized ? '❐' : '□'}
           </button>
           <button
-            onMouseDown={(e) => e.stopPropagation()}
             onClick={() => onClose(pane.id)}
             title="閉じる"
-            className="grid h-6 w-7 place-items-center rounded text-[11px] text-dd-muted transition hover:bg-dd-ng hover:text-white"
+            className="grid h-6 w-6 place-items-center rounded text-[11px] text-dd-muted transition hover:bg-dd-ng hover:text-white"
           >
             ✕
           </button>
         </div>
       </div>
 
-      {/* ---------- 中身 ---------- */}
-      <div className="flex flex-1 flex-col items-center justify-center gap-3 overflow-y-auto p-5 text-center">
-        <span
-          className={`grid h-14 w-14 place-items-center rounded-2xl bg-gradient-to-br text-2xl text-white shadow-lg ${
-            tool?.color ?? 'from-dd-accent to-dd-accent2'
-          }`}
+      {/* ---------- ウィンドウ内タブ ---------- */}
+      <div
+        onMouseDown={(e) => e.stopPropagation()}
+        className="flex h-[26px] flex-none items-center gap-0.5 overflow-x-auto border-b border-white/10 bg-black/20 px-1.5"
+      >
+        {tabs.map((t) => {
+          const tool = findTool(t.toolId);
+          const on = t.id === activeTabId;
+          return (
+            <div
+              key={t.id}
+              onClick={() => onSelectTab(pane.id, t.id)}
+              className={`group flex h-[20px] max-w-[130px] flex-none cursor-pointer items-center gap-1 rounded px-1.5 text-[10px] transition
+                ${on ? 'bg-white/[0.14] text-dd-text' : 'text-dd-muted hover:bg-white/[0.07]'}`}
+            >
+              <span
+                className={`grid h-3 w-3 flex-none place-items-center rounded-sm bg-gradient-to-br text-[7px] text-white ${
+                  tool?.color ?? 'from-dd-accent to-dd-accent2'
+                }`}
+              >
+                {t.loading ? '◌' : (tool?.icon ?? '□')}
+              </span>
+              <span className="min-w-0 flex-1 truncate">{t.title}</span>
+              {tabs.length > 1 && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onCloseTab(pane.id, t.id);
+                  }}
+                  className="grid h-3 w-3 flex-none place-items-center rounded text-[8px] opacity-0 transition hover:bg-white/20 group-hover:opacity-100"
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+          );
+        })}
+
+        <button
+          onClick={() => setPicker(true)}
+          title="このウィンドウにタブを追加"
+          className="grid h-[18px] w-5 flex-none place-items-center rounded text-[12px] text-dd-muted transition hover:bg-white/10 hover:text-dd-text"
         >
-          {tool?.icon ?? '□'}
-        </span>
+          ＋
+        </button>
+      </div>
 
-        <div>
-          <div className="text-[14px] font-bold">{pane.title}</div>
-          <div className="mt-1 break-all px-2 text-[10.5px] text-dd-muted">
-            {pane.url || '準備中のツールです'}
-          </div>
-        </div>
+      {/* ---------- 中身 ---------- */}
+      <div className="relative flex-1 overflow-hidden">
+        {/* ドラッグ中は覆いをかけて、マウス操作を webview に奪われないようにする */}
+        {busy && <div className="absolute inset-0 z-20 bg-dd-panel/60" />}
 
-        {pane.url && (
-          <button
-            onClick={() => window.dd?.shell.openExternal(pane.url)}
-            className="rounded-lg bg-gradient-to-br from-dd-accent to-dd-accent2 px-4 py-2 text-[11.5px] font-semibold text-white transition hover:brightness-110"
+        {tabs.map((t) => (
+          <div
+            key={t.id}
+            className="absolute inset-0"
+            style={{ visibility: t.id === activeTabId ? 'visible' : 'hidden' }}
           >
-            ブラウザで開く
-          </button>
-        )}
-
-        <p className="max-w-[280px] text-[10px] leading-relaxed text-dd-muted">
-          外部サイトはセキュリティ上、既定のブラウザで開きます。
-          DayDream 専用ツールは今後この枠内に直接表示できるようにします。
-        </p>
+            <WebFrame
+              url={t.url}
+              command={t.id === activeTabId ? command : null}
+              onTitle={(title) => onUpdateTab(pane.id, t.id, { title })}
+              onLoading={(loading) => onUpdateTab(pane.id, t.id, { loading })}
+              onUrlChange={(url) => onUpdateTab(pane.id, t.id, { url })}
+            />
+          </div>
+        ))}
       </div>
 
       {/* ---------- サイズ変更のつかみ ---------- */}
       {!pane.maximized &&
         handles.map((h) => (
-          <div
-            key={h.dir}
-            onMouseDown={(e) => beginResize(e, h.dir)}
-            className={`absolute z-10 ${h.className}`}
-          />
+          <div key={h.dir} onMouseDown={(e) => beginResize(e, h.dir)} className={`absolute z-30 ${h.className}`} />
         ))}
+
+      {/* ---------- タブ追加の選択 ---------- */}
+      {picker && (
+        <div
+          onClick={() => setPicker(false)}
+          onMouseDown={(e) => e.stopPropagation()}
+          className="absolute inset-0 z-40 grid place-items-center bg-black/70 p-4 backdrop-blur-sm"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="max-h-full w-full overflow-y-auto rounded-xl border border-white/10 bg-dd-panel p-4"
+          >
+            <h4 className="mb-3 text-[12px] font-bold">このウィンドウに追加</h4>
+            <div className="grid grid-cols-4 gap-2 sm:grid-cols-5">
+              {TOOLS.filter((t) => t.url).map((t) => (
+                <button
+                  key={t.id}
+                  onClick={() => {
+                    onAddTab(pane.id, t);
+                    setPicker(false);
+                  }}
+                  className="flex flex-col items-center gap-1.5 rounded-xl border border-white/10 bg-white/[0.05] px-1 py-2 transition hover:bg-white/[0.12]"
+                >
+                  <span
+                    className={`grid h-7 w-7 place-items-center rounded-lg bg-gradient-to-br text-[12px] text-white ${t.color}`}
+                  >
+                    {t.icon}
+                  </span>
+                  <span className="w-full truncate text-center text-[9px]">{t.name}</span>
+                </button>
+              ))}
+            </div>
+            <button
+              onClick={() => setPicker(false)}
+              className="mt-3 w-full rounded-lg border border-white/10 py-1.5 text-[11px] transition hover:bg-white/10"
+            >
+              閉じる
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

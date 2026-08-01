@@ -36,6 +36,7 @@ function createWindow() {
       contextIsolation: true,   // セキュリティ：必ず true
       nodeIntegration: false,   // セキュリティ：必ず false
       sandbox: false,
+      webviewTag: true,         // アプリ内にサイトを埋め込むため
     },
   });
 
@@ -97,6 +98,29 @@ app.on('window-all-closed', () => {
 /* ============================================================
    IPC（React 側からの呼び出し窓口）
    ============================================================ */
+
+/* ============================================================
+   webview（アプリ内ブラウザ）の安全設定
+   ============================================================ */
+
+app.on('web-contents-created', (_event, contents) => {
+  // webview が作られるとき、危険な設定を強制的に無効化する
+  contents.on('will-attach-webview', (_e, webPreferences) => {
+    delete webPreferences.preload;
+    webPreferences.nodeIntegration = false;
+    webPreferences.contextIsolation = true;
+  });
+
+  // webview の中から新しいウィンドウを開こうとしたら、既定のブラウザへ回す
+  if (contents.getType() === 'webview') {
+    contents.setWindowOpenHandler(({ url }) => {
+      if (url.startsWith('http://') || url.startsWith('https://')) {
+        shell.openExternal(url);
+      }
+      return { action: 'deny' };
+    });
+  }
+});
 
 ipcMain.handle('window:minimize', () => {
   mainWindow?.minimize();

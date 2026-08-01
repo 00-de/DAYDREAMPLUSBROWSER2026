@@ -23,12 +23,17 @@ module.exports = {
       animation: {
         'fade-in': 'fadeIn .4s ease both',
         rise: 'rise .5s cubic-bezier(.22,1,.36,1) both',
+        slide: 'slide 1.1s ease-in-out infinite',
       },
       keyframes: {
         fadeIn: { from: { opacity: '0' }, to: { opacity: '1' } },
         rise: {
           from: { opacity: '0', transform: 'translateY(14px)' },
           to: { opacity: '1', transform: 'translateY(0)' },
+        },
+        slide: {
+          '0%': { transform: 'translateX(-100%)' },
+          '100%': { transform: 'translateX(400%)' },
         },
       },
     },

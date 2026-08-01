@@ -211,6 +211,10 @@ export default function Workspace() {
             onClose={ws.closePane}
             onSnap={(id, zone) => ws.snapPane(id, zone, size)}
             onSnapHint={setHint}
+            onAddTab={ws.addTab}
+            onSelectTab={ws.selectTab}
+            onCloseTab={ws.closeTab}
+            onUpdateTab={ws.updateTab}
           />
         ))}
 

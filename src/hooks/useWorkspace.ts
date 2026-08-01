@@ -9,7 +9,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { loadLocal, saveLocal } from '../lib/storage';
-import type { Layout, Pane, SnapZone, Tool } from '../types';
+import type { Layout, Pane, SnapZone, Tab, Tool } from '../types';
 
 /** ウィンドウの最小サイズ */
 export const MIN_W = 280;
@@ -86,11 +86,20 @@ export function useWorkspace() {
       const offset = (n % 6) * 28;
 
       topZ.current += 1;
+      const firstTab: Tab = {
+        id: uid(),
+        toolId: tool.id,
+        title: tool.name,
+        url: tool.url,
+        loading: true,
+      };
       const pane: Pane = {
         id: uid(),
         toolId: tool.id,
         title: tool.name,
         url: tool.url,
+        tabs: [firstTab],
+        activeTabId: firstTab.id,
         x: Math.min(40 + offset, Math.max(0, container.w - DEF_W - 20)),
         y: Math.min(40 + offset, Math.max(0, container.h - DEF_H - 20)),
         w: Math.min(DEF_W, container.w - 40),
@@ -159,6 +168,74 @@ export function useWorkspace() {
     [panes],
   );
 
+  /* ---------- ウィンドウ内のタブ操作 ---------- */
+
+  /** ウィンドウにタブを1枚追加する */
+  const addTab = useCallback((paneId: string, tool: Tool) => {
+    if (!tool.url) return;
+    setPanes((prev) =>
+      prev.map((p) => {
+        if (p.id !== paneId) return p;
+        const list = p.tabs ?? [];
+        const exists = list.find((t) => t.toolId === tool.id);
+        if (exists) return { ...p, activeTabId: exists.id, title: exists.title };
+
+        const tab: Tab = {
+          id: uid(),
+          toolId: tool.id,
+          title: tool.name,
+          url: tool.url,
+          loading: true,
+        };
+        return { ...p, tabs: [...list, tab], activeTabId: tab.id, title: tab.title };
+      }),
+    );
+  }, []);
+
+  /** ウィンドウ内のタブを選ぶ */
+  const selectTab = useCallback((paneId: string, tabId: string) => {
+    setPanes((prev) =>
+      prev.map((p) => {
+        if (p.id !== paneId) return p;
+        const t = p.tabs?.find((x) => x.id === tabId);
+        return { ...p, activeTabId: tabId, title: t?.title ?? p.title };
+      }),
+    );
+  }, []);
+
+  /** ウィンドウ内のタブを閉じる（最後の1枚ならウィンドウごと閉じる） */
+  const closeTab = useCallback((paneId: string, tabId: string) => {
+    setPanes((prev) => {
+      const target = prev.find((p) => p.id === paneId);
+      const rest = (target?.tabs ?? []).filter((t) => t.id !== tabId);
+
+      if (rest.length === 0) return prev.filter((p) => p.id !== paneId);
+
+      return prev.map((p) => {
+        if (p.id !== paneId) return p;
+        const nextActive = p.activeTabId === tabId ? rest[rest.length - 1] : rest.find((t) => t.id === p.activeTabId);
+        return {
+          ...p,
+          tabs: rest,
+          activeTabId: nextActive?.id ?? rest[0].id,
+          title: nextActive?.title ?? rest[0].title,
+        };
+      });
+    });
+  }, []);
+
+  /** タブの中身が変わったときに反映する */
+  const updateTab = useCallback((paneId: string, tabId: string, patch: Partial<Tab>) => {
+    setPanes((prev) =>
+      prev.map((p) => {
+        if (p.id !== paneId) return p;
+        const tabs = (p.tabs ?? []).map((t) => (t.id === tabId ? { ...t, ...patch } : t));
+        const act = tabs.find((t) => t.id === p.activeTabId);
+        return { ...p, tabs, title: act?.title ?? p.title };
+      }),
+    );
+  }, []);
+
   /* ---------- レイアウトの保存・呼び出し ---------- */
 
   const saveLayout = useCallback(
@@ -199,5 +276,9 @@ export function useWorkspace() {
     saveLayout,
     applyLayout,
     deleteLayout,
+    addTab,
+    selectTab,
+    closeTab,
+    updateTab,
   };
 }

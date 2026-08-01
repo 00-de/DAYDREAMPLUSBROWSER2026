@@ -9,20 +9,22 @@
 import { useEffect, useState } from 'react';
 import TitleBar from './components/TitleBar';
 import Home from './components/Home';
+import Browser from './components/Browser';
 import Workspace from './components/Workspace';
 import StartupCheck from './components/StartupCheck';
 import type { ViewName } from './types';
+
+const ORDER: ViewName[] = ['home', 'browser', 'workspace', 'check'];
 
 export default function App() {
   const [view, setView] = useState<ViewName>('home');
 
   /* Ctrl + Tab で画面を順に切り替える */
   useEffect(() => {
-    const order: ViewName[] = ['home', 'workspace', 'check'];
     const onKey = (e: KeyboardEvent) => {
       if (e.ctrlKey && e.key === 'Tab') {
         e.preventDefault();
-        setView((cur) => order[(order.indexOf(cur) + 1) % order.length]);
+        setView((cur) => ORDER[(ORDER.indexOf(cur) + 1) % ORDER.length]);
       }
     };
     window.addEventListener('keydown', onKey);
@@ -34,12 +36,22 @@ export default function App() {
       <TitleBar view={view} onChangeView={setView} />
 
       <main className="flex-1 overflow-hidden">
-        {view === 'home' && (
+        {/* ブラウザと Workspace は、切り替えても中身を消さずに残します。
+            そうしないと、タブを切り替えるたびにページが再読み込みされてしまいます。 */}
+        <div className="h-full" style={{ display: view === 'home' ? 'block' : 'none' }}>
           <div className="h-full overflow-y-auto">
             <Home />
           </div>
-        )}
-        {view === 'workspace' && <Workspace />}
+        </div>
+
+        <div className="h-full" style={{ display: view === 'browser' ? 'block' : 'none' }}>
+          <Browser />
+        </div>
+
+        <div className="h-full" style={{ display: view === 'workspace' ? 'block' : 'none' }}>
+          <Workspace />
+        </div>
+
         {view === 'check' && (
           <div className="h-full overflow-y-auto">
             <StartupCheck />

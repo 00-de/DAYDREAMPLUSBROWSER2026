@@ -37,6 +37,8 @@ if exist "NoticePanel.tsx"    move /y "NoticePanel.tsx"    "src\components\" >nu
 if exist "StartupCheck.tsx"   move /y "StartupCheck.tsx"   "src\components\" >nul
 if exist "Workspace.tsx"      move /y "Workspace.tsx"      "src\components\" >nul
 if exist "PaneWindow.tsx"     move /y "PaneWindow.tsx"     "src\components\" >nul
+if exist "Browser.tsx"        move /y "Browser.tsx"        "src\components\" >nul
+if exist "WebFrame.tsx"       move /y "WebFrame.tsx"       "src\components\" >nul
 
 rem --- src\lib ƒtƒHƒ‹ƒ_‚Ö ---
 if exist "firebase.ts"        move /y "firebase.ts"        "src\lib\" >nul
@@ -78,6 +80,8 @@ call :CHECK "src\components\NoticePanel.tsx"
 call :CHECK "src\components\StartupCheck.tsx"
 call :CHECK "src\components\Workspace.tsx"
 call :CHECK "src\components\PaneWindow.tsx"
+call :CHECK "src\components\Browser.tsx"
+call :CHECK "src\components\WebFrame.tsx"
 call :CHECK "src\hooks\useWorkspace.ts"
 call :CHECK "src\lib\firebase.ts"
 call :CHECK "src\lib\tools.ts"
