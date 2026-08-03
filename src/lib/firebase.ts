@@ -16,12 +16,12 @@ import { getStorage, type FirebaseStorage } from 'firebase/storage';
 import { getAuth, type Auth } from 'firebase/auth';
 
 const firebaseConfig = {
-  apiKey: 'ここにAPIキー',
-  authDomain: 'ここにauthDomain',
-  projectId: 'ここにprojectId',
-  storageBucket: 'ここにstorageBucket',
-  messagingSenderId: 'ここにmessagingSenderId',
-  appId: 'ここにappId',
+  apiKey: "AIzaSyA6G1UCwb6aTaJiPp7Gy6mCgxmBLowVMg4",
+  authDomain: "daydreambroser2026.firebaseapp.com",
+  projectId: "daydreambroser2026",
+  storageBucket: "daydreambroser2026.firebasestorage.app",
+  messagingSenderId: "497868135929",
+  appId: "1:497868135929:web:59a7d0146fec2091c43128"
 };
 
 /** 設定が書き換え済みかどうかの判定 */
