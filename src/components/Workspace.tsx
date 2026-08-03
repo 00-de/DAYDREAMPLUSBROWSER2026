@@ -220,7 +220,7 @@ export default function Workspace() {
 
         {/* ---------- 最小化したウィンドウの置き場 ---------- */}
         {minimized.length > 0 && (
-          <div className="absolute bottom-3 left-1/2 z-[9998] flex -translate-x-1/2 items-center gap-1.5 rounded-xl border border-white/10 bg-dd-panel/90 px-2.5 py-2 backdrop-blur-[18px]">
+          <div className="absolute bottom-[76px] left-1/2 z-[9998] flex -translate-x-1/2 items-center gap-1.5 rounded-xl border border-white/10 bg-dd-panel/90 px-2.5 py-2 backdrop-blur-[18px]">
             {minimized.map((p) => {
               const t = findTool(p.toolId);
               return (

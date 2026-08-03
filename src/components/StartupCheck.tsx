@@ -66,7 +66,7 @@ export default function StartupCheck() {
   const ngCount = checks.filter((c) => c.status === 'ng').length;
 
   return (
-    <div className="mx-auto w-full max-w-3xl animate-rise px-8 py-10">
+    <div className="mx-auto w-full max-w-3xl animate-rise px-8 pb-28 pt-10">
       <h1 className="mb-1 text-[19px] font-extrabold">起動チェック</h1>
       <p className="mb-7 text-[12px] text-dd-muted">開発環境が正しく動いているかを確認します。</p>
 

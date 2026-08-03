@@ -13,6 +13,7 @@ import Home from './components/Home';
 import Browser from './components/Browser';
 import Workspace from './components/Workspace';
 import StartupCheck from './components/StartupCheck';
+import Dock from './components/Dock';
 import type { Tool, ViewName } from './types';
 
 const ORDER: ViewName[] = ['home', 'browser', 'workspace', 'check'];
@@ -67,6 +68,9 @@ export default function App() {
           </div>
         )}
       </main>
+
+      {/* 画面下の Dock。どの画面でも共通で表示します。 */}
+      <Dock onOpen={openInApp} />
     </div>
   );
 }

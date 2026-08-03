@@ -86,7 +86,7 @@ export default function Home({ onOpenInApp }: Props) {
   const listed = category === 'all' ? TOOLS : TOOLS.filter((t) => t.category === category);
 
   return (
-    <div className="mx-auto w-full max-w-6xl animate-rise px-8 py-10">
+    <div className="mx-auto w-full max-w-6xl animate-rise px-8 pb-28 pt-10">
       {/* ---------- ロゴ ---------- */}
       <div className="mb-8 flex flex-col items-center">
         <div className="mb-4 grid h-16 w-16 place-items-center rounded-[20px] bg-gradient-to-br from-dd-accent to-dd-accent2 text-3xl shadow-[0_10px_40px_rgba(91,140,255,.45)]">
