@@ -40,6 +40,7 @@ if exist "PaneWindow.tsx"     move /y "PaneWindow.tsx"     "src\components\" >nu
 if exist "Browser.tsx"        move /y "Browser.tsx"        "src\components\" >nul
 if exist "WebFrame.tsx"       move /y "WebFrame.tsx"       "src\components\" >nul
 if exist "Dock.tsx"           move /y "Dock.tsx"           "src\components\" >nul
+if exist "Account.tsx"        move /y "Account.tsx"        "src\components\" >nul
 
 rem --- src\lib フォルダへ ---
 if exist "firebase.ts"        move /y "firebase.ts"        "src\lib\" >nul
@@ -48,6 +49,8 @@ if exist "storage.ts"         move /y "storage.ts"         "src\lib\" >nul
 
 rem --- src\hooks フォルダへ ---
 if exist "useWorkspace.ts"    move /y "useWorkspace.ts"    "src\hooks\" >nul
+if exist "useAuth.ts"         move /y "useAuth.ts"         "src\hooks\" >nul
+if exist "useSync.ts"         move /y "useSync.ts"         "src\hooks\" >nul
 
 rem --- src\types フォルダへ ---
 if exist "index.ts"           move /y "index.ts"           "src\types\" >nul
@@ -84,7 +87,10 @@ call :CHECK "src\components\PaneWindow.tsx"
 call :CHECK "src\components\Browser.tsx"
 call :CHECK "src\components\WebFrame.tsx"
 call :CHECK "src\components\Dock.tsx"
+call :CHECK "src\components\Account.tsx"
 call :CHECK "src\hooks\useWorkspace.ts"
+call :CHECK "src\hooks\useAuth.ts"
+call :CHECK "src\hooks\useSync.ts"
 call :CHECK "src\lib\firebase.ts"
 call :CHECK "src\lib\tools.ts"
 call :CHECK "src\lib\storage.ts"

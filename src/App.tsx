@@ -12,11 +12,12 @@ import TitleBar from './components/TitleBar';
 import Home from './components/Home';
 import Browser from './components/Browser';
 import Workspace from './components/Workspace';
+import Account from './components/Account';
 import StartupCheck from './components/StartupCheck';
 import Dock from './components/Dock';
 import type { Tool, ViewName } from './types';
 
-const ORDER: ViewName[] = ['home', 'browser', 'workspace', 'check'];
+const ORDER: ViewName[] = ['home', 'browser', 'workspace', 'account', 'check'];
 
 export default function App() {
   const [view, setView] = useState<ViewName>('home');
@@ -61,6 +62,12 @@ export default function App() {
         <div className="h-full" style={{ display: view === 'workspace' ? 'block' : 'none' }}>
           <Workspace />
         </div>
+
+        {view === 'account' && (
+          <div className="h-full overflow-y-auto">
+            <Account />
+          </div>
+        )}
 
         {view === 'check' && (
           <div className="h-full overflow-y-auto">

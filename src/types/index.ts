@@ -68,7 +68,7 @@ export interface Notice {
 }
 
 /** 画面の切り替え */
-export type ViewName = 'home' | 'browser' | 'workspace' | 'check';
+export type ViewName = 'home' | 'browser' | 'workspace' | 'account' | 'check';
 
 /* ============================================================
    Workspace 関連
