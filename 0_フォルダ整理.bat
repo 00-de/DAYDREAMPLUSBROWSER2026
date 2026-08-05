@@ -41,16 +41,23 @@ if exist "Browser.tsx"        move /y "Browser.tsx"        "src\components\" >nu
 if exist "WebFrame.tsx"       move /y "WebFrame.tsx"       "src\components\" >nul
 if exist "Dock.tsx"           move /y "Dock.tsx"           "src\components\" >nul
 if exist "Account.tsx"        move /y "Account.tsx"        "src\components\" >nul
+if exist "Dashboard.tsx"      move /y "Dashboard.tsx"      "src\components\" >nul
+if exist "DashboardParts.tsx" move /y "DashboardParts.tsx" "src\components\" >nul
+if exist "MemberPhoto.tsx"    move /y "MemberPhoto.tsx"    "src\components\" >nul
 
 rem --- src\lib フォルダへ ---
 if exist "firebase.ts"        move /y "firebase.ts"        "src\lib\" >nul
 if exist "tools.ts"           move /y "tools.ts"           "src\lib\" >nul
 if exist "storage.ts"         move /y "storage.ts"         "src\lib\" >nul
+if exist "daydream.ts"        move /y "daydream.ts"        "src\lib\" >nul
+if exist "status.ts"          move /y "status.ts"          "src\lib\" >nul
 
 rem --- src\hooks フォルダへ ---
 if exist "useWorkspace.ts"    move /y "useWorkspace.ts"    "src\hooks\" >nul
 if exist "useAuth.ts"         move /y "useAuth.ts"         "src\hooks\" >nul
 if exist "useSync.ts"         move /y "useSync.ts"         "src\hooks\" >nul
+if exist "useDashboard.ts"    move /y "useDashboard.ts"    "src\hooks\" >nul
+if exist "useImageUpload.ts"  move /y "useImageUpload.ts"  "src\hooks\" >nul
 
 rem --- src\types フォルダへ ---
 if exist "index.ts"           move /y "index.ts"           "src\types\" >nul
@@ -90,7 +97,14 @@ call :CHECK "src\components\Dock.tsx"
 call :CHECK "src\components\Account.tsx"
 call :CHECK "src\hooks\useWorkspace.ts"
 call :CHECK "src\hooks\useAuth.ts"
+call :CHECK "src\components\Dashboard.tsx"
+call :CHECK "src\components\DashboardParts.tsx"
+call :CHECK "src\lib\daydream.ts"
+call :CHECK "src\lib\status.ts"
 call :CHECK "src\hooks\useSync.ts"
+call :CHECK "src\components\MemberPhoto.tsx"
+call :CHECK "src\hooks\useDashboard.ts"
+call :CHECK "src\hooks\useImageUpload.ts"
 call :CHECK "src\lib\firebase.ts"
 call :CHECK "src\lib\tools.ts"
 call :CHECK "src\lib\storage.ts"

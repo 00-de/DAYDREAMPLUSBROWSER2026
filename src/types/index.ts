@@ -68,7 +68,7 @@ export interface Notice {
 }
 
 /** 画面の切り替え */
-export type ViewName = 'home' | 'browser' | 'workspace' | 'account' | 'check';
+export type ViewName = 'home' | 'browser' | 'workspace' | 'dashboard' | 'account' | 'check';
 
 /* ============================================================
    Workspace 関連
@@ -126,4 +126,75 @@ export interface Tab {
   title: string;
   url: string;
   loading: boolean;
+}
+
+/* ============================================================
+   DayDream Dashboard 関連
+   ============================================================ */
+
+/** メンバー */
+export interface Member {
+  id: string;
+  name: string;
+  reading: string;
+  role: string;
+  height: number;
+  birthday: string;
+  color: string;
+  note: string;
+  /** 顔写真の URL（Firebase Storage）。未登録なら空。 */
+  photo?: string;
+}
+
+/** ライブ・イベント予定 */
+export interface LiveEvent {
+  id: string;
+  title: string;
+  date: string;
+  venue: string;
+  status: 'planned' | 'confirmed' | 'done' | 'canceled';
+  note: string;
+}
+
+/** 楽曲 */
+export interface Song {
+  id: string;
+  title: string;
+  status: 'idea' | 'writing' | 'recording' | 'mixing' | 'released';
+  vocal: string;
+  releaseDate: string;
+  url: string;
+  note: string;
+}
+
+/** MV・映像 */
+export interface Video {
+  id: string;
+  title: string;
+  songId: string;
+  status: 'idea' | 'shooting' | 'editing' | 'released';
+  releaseDate: string;
+  url: string;
+  note: string;
+}
+
+/** SNSアカウント */
+export interface SnsAccount {
+  id: string;
+  platform: string;
+  handle: string;
+  url: string;
+  followers: number;
+  updatedAt: string;
+}
+
+/** 目標 */
+export interface Goal {
+  id: string;
+  title: string;
+  target: number;
+  current: number;
+  unit: string;
+  deadline: string;
+  done: boolean;
 }
