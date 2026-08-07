@@ -16,6 +16,7 @@ if not exist "src\components"  mkdir "src\components"
 if not exist "src\lib"         mkdir "src\lib"
 if not exist "src\types"       mkdir "src\types"
 if not exist "src\hooks"       mkdir "src\hooks"
+if not exist "build"           mkdir "build"
 
 rem --- electron フォルダへ ---
 if exist "main.cjs"           move /y "main.cjs"           "electron\" >nul
@@ -51,6 +52,10 @@ if exist "tools.ts"           move /y "tools.ts"           "src\lib\" >nul
 if exist "storage.ts"         move /y "storage.ts"         "src\lib\" >nul
 if exist "daydream.ts"        move /y "daydream.ts"        "src\lib\" >nul
 if exist "status.ts"          move /y "status.ts"          "src\lib\" >nul
+
+rem --- build フォルダへ ---
+if exist "icon.ico"           move /y "icon.ico"           "build\" >nul
+if exist "icon.png"           move /y "icon.png"           "build\" >nul
 
 rem --- src\hooks フォルダへ ---
 if exist "useWorkspace.ts"    move /y "useWorkspace.ts"    "src\hooks\" >nul
@@ -109,6 +114,7 @@ call :CHECK "src\lib\firebase.ts"
 call :CHECK "src\lib\tools.ts"
 call :CHECK "src\lib\storage.ts"
 call :CHECK "src\types\index.ts"
+call :CHECK "build\icon.ico"
 
 echo.
 if %NG%==0 (
