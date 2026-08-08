@@ -9,6 +9,7 @@
 
 const { app, BrowserWindow, ipcMain, shell } = require('electron');
 const path = require('path');
+const { setupUpdater } = require('./updater.cjs');
 
 const isDev = process.env.NODE_ENV === 'development';
 const DEV_URL = 'http://localhost:5180';
@@ -44,6 +45,9 @@ function createWindow() {
   mainWindow.once('ready-to-show', () => {
     mainWindow.show();
   });
+
+  // 自動更新のしくみを組み立てます
+  setupUpdater(mainWindow, isDev);
 
   if (isDev) {
     mainWindow.loadURL(DEV_URL);

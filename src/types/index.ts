@@ -28,7 +28,36 @@ export interface DDBridge {
   shell: {
     openExternal: (url: string) => Promise<boolean>;
   };
+  update: {
+    check: () => Promise<{ status: string; version?: string | null; message?: string }>;
+    download: () => Promise<boolean>;
+    install: () => Promise<boolean>;
+    getVersion: () => Promise<string>;
+    /** 進み具合を受け取ります。戻り値を呼ぶと受け取りをやめます。 */
+    onStatus: (callback: (data: UpdateStatus) => void) => () => void;
+  };
   isElectron: true;
+}
+
+/** 更新の進み具合 */
+export interface UpdateStatus {
+  status:
+    | 'checking'
+    | 'available'
+    | 'latest'
+    | 'downloading'
+    | 'downloaded'
+    | 'error'
+    | 'dev';
+  version?: string;
+  notes?: string;
+  date?: string;
+  percent?: number;
+  transferred?: number;
+  total?: number;
+  bytesPerSecond?: number;
+  message?: string;
+  detail?: string;
 }
 
 declare global {

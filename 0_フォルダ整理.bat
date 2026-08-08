@@ -21,6 +21,7 @@ if not exist "build"           mkdir "build"
 rem --- electron フォルダへ ---
 if exist "main.cjs"           move /y "main.cjs"           "electron\" >nul
 if exist "preload.cjs"        move /y "preload.cjs"        "electron\" >nul
+if exist "updater.cjs"        move /y "updater.cjs"        "electron\" >nul
 
 rem --- src フォルダへ ---
 if exist "main.tsx"           move /y "main.tsx"           "src\" >nul
@@ -47,6 +48,7 @@ if exist "DashboardParts.tsx" move /y "DashboardParts.tsx" "src\components\" >nu
 if exist "MemberPhoto.tsx"    move /y "MemberPhoto.tsx"    "src\components\" >nul
 if exist "Mail.tsx"           move /y "Mail.tsx"           "src\components\" >nul
 if exist "Appearance.tsx"     move /y "Appearance.tsx"     "src\components\" >nul
+if exist "Updater.tsx"        move /y "Updater.tsx"        "src\components\" >nul
 
 rem --- src\lib フォルダへ ---
 if exist "firebase.ts"        move /y "firebase.ts"        "src\lib\" >nul
@@ -89,6 +91,7 @@ call :CHECK ".eslintrc.cjs"
 call :CHECK ".gitignore"
 call :CHECK "electron\main.cjs"
 call :CHECK "electron\preload.cjs"
+call :CHECK "electron\updater.cjs"
 call :CHECK "src\main.tsx"
 call :CHECK "src\App.tsx"
 call :CHECK "src\index.css"
@@ -114,6 +117,7 @@ call :CHECK "src\lib\daydream.ts"
 call :CHECK "src\components\Mail.tsx"
 call :CHECK "src\lib\status.ts"
 call :CHECK "src\components\Appearance.tsx"
+call :CHECK "src\components\Updater.tsx"
 call :CHECK "src\lib\mail.ts"
 call :CHECK "src\lib\themes.ts"
 call :CHECK "src\hooks\useBackground.ts"

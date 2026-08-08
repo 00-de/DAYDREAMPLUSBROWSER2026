@@ -11,6 +11,7 @@ import { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { useSync } from '../hooks/useSync';
 import { firebaseConfig, isFirebaseReady } from '../lib/firebase';
+import Updater from './Updater';
 
 export default function Account() {
   const { user, ready, busy, error, login, register, logout, setError } = useAuth();
@@ -36,13 +37,15 @@ export default function Account() {
         <h1 className="mb-1 text-[19px] font-extrabold">アカウント</h1>
         <p className="mb-7 text-[12px] text-dd-muted">クラウド同期の設定です。</p>
 
-        <div className="rounded-2xl border border-dd-warn/30 bg-dd-warn/10 p-6">
+        <div className="mb-5 rounded-2xl border border-dd-warn/30 bg-dd-warn/10 p-6">
           <h2 className="mb-2 text-[14px] font-bold text-dd-warn">Firebase が未設定です</h2>
           <p className="text-[12px] leading-relaxed text-dd-muted">
             <code className="rounded bg-black/30 px-1.5 py-0.5">src/lib/firebase.ts</code> に、
             Firebase コンソールで取得した設定を入力してください。
           </p>
         </div>
+
+        <Updater />
       </div>
     );
   }
@@ -132,6 +135,10 @@ export default function Account() {
           <br />
           これまでどおりお使いいただけます。
         </p>
+
+        <div className="mt-8">
+          <Updater />
+        </div>
       </div>
     );
   }
@@ -225,6 +232,10 @@ export default function Account() {
             </div>
           ))}
         </dl>
+      </div>
+
+      <div className="mt-5">
+        <Updater />
       </div>
     </div>
   );

@@ -15,7 +15,6 @@
     "format": "prettier --write \"src/**/*.{ts,tsx,css}\"",
     "dist": "npm run build && electron-builder --win --x64"
   },
-  "dependencies": {},
   "devDependencies": {
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
@@ -79,6 +78,17 @@
       "deleteAppDataOnUninstall": false,
       "language": "1041"
     },
-    "compression": "maximum"
+    "compression": "maximum",
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "00-de",
+        "repo": "DAYDREAMPLUSBROWSER2026",
+        "releaseType": "release"
+      }
+    ]
+  },
+  "dependencies": {
+    "electron-updater": "^6.3.9"
   }
 }
