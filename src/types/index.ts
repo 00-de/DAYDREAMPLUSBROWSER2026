@@ -287,3 +287,37 @@ export interface MailSettings {
   unsubUrl: string;
   ngWords: string;
 }
+
+/* ============================================================
+   グループ（共有）関連
+   ============================================================ */
+
+/** 参加している人 */
+export interface GroupMember {
+  uid: string;
+  email: string;
+  /** 表示名 */
+  name: string;
+  /** グループを作った人かどうか */
+  owner: boolean;
+  /** 参加した日時（ミリ秒） */
+  joinedAt: number;
+}
+
+/** グループ */
+export interface Group {
+  id: string;
+  name: string;
+  /** 参加用の合言葉（6文字） */
+  inviteCode: string;
+  /** 作った人の uid */
+  ownerUid: string;
+  /** 参加者の uid 一覧。Firestore の検索に使います。 */
+  memberUids: string[];
+  /** 参加者の詳細 */
+  members: GroupMember[];
+  createdAt: number;
+}
+
+/** いま使っている保存先 */
+export type DataScope = 'personal' | 'group';

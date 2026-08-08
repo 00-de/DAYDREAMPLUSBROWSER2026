@@ -12,6 +12,7 @@ import { useAuth } from '../hooks/useAuth';
 import { useSync } from '../hooks/useSync';
 import { firebaseConfig, isFirebaseReady } from '../lib/firebase';
 import Updater from './Updater';
+import GroupPanel from './GroupPanel';
 
 export default function Account() {
   const { user, ready, busy, error, login, register, logout, setError } = useAuth();
@@ -232,6 +233,10 @@ export default function Account() {
             </div>
           ))}
         </dl>
+      </div>
+
+      <div className="mt-5">
+        <GroupPanel user={user} />
       </div>
 
       <div className="mt-5">

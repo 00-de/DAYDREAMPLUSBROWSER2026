@@ -12,6 +12,7 @@ import { useMemo, useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { useCollection } from '../hooks/useDashboard';
 import { useMailSettings } from '../hooks/useMailSettings';
+import { useGroup } from '../hooks/useGroup';
 import {
   DEFAULT_CONTACTS,
   DEFAULT_TEMPLATES,
@@ -43,12 +44,13 @@ type Draft = Record<string, string | number | boolean>;
 
 export default function Mail() {
   const { user } = useAuth();
+  const { group, useGroupData, scopePath } = useGroup(user);
   const [tab, setTab] = useState<TabId>('compose');
 
-  const contacts = useCollection<Contact>('contacts', DEFAULT_CONTACTS, user);
-  const templates = useCollection<MailTemplate>('templates', DEFAULT_TEMPLATES, user);
-  const sent = useCollection<MailRecord>('sentMails', [], user);
-  const logs = useCollection<MailLog>('mailLogs', [], user);
+  const contacts = useCollection<Contact>('contacts', DEFAULT_CONTACTS, user, scopePath);
+  const templates = useCollection<MailTemplate>('templates', DEFAULT_TEMPLATES, user, scopePath);
+  const sent = useCollection<MailRecord>('sentMails', [], user, scopePath);
+  const logs = useCollection<MailLog>('mailLogs', [], user, scopePath);
   const { settings, save: saveSettings } = useMailSettings(user);
 
   /* ---------- 単発メール ---------- */
@@ -279,7 +281,11 @@ export default function Mail() {
         <div className="min-w-0 flex-1">
           <h1 className="text-[18px] font-extrabold">DayDream Mail</h1>
           <p className="text-[11px] text-dd-muted">
-            {user ? 'クラウドに保存されています' : 'この PC に保存されています'}
+            {!user
+              ? 'この PC に保存されています'
+              : group && useGroupData
+                ? `${group.name} と共有中`
+                : 'クラウドに保存されています'}
           </p>
         </div>
         <span

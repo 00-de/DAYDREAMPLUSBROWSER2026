@@ -12,6 +12,7 @@ import { useMemo, useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { useCollection } from '../hooks/useDashboard';
 import { useImageUpload } from '../hooks/useImageUpload';
+import { useGroup } from '../hooks/useGroup';
 import MemberPhoto from './MemberPhoto';
 import {
   DEFAULT_GOALS,
@@ -62,14 +63,15 @@ const blank = {
 
 export default function Dashboard() {
   const { user } = useAuth();
+  const { group, useGroupData, scopePath } = useGroup(user);
   const [tab, setTab] = useState<TabId>('overview');
 
-  const members = useCollection<Member>('members', DEFAULT_MEMBERS, user);
-  const lives = useCollection<LiveEvent>('lives', DEFAULT_LIVES, user);
-  const songs = useCollection<Song>('songs', DEFAULT_SONGS, user);
-  const videos = useCollection<Video>('videos', DEFAULT_VIDEOS, user);
-  const sns = useCollection<SnsAccount>('sns', DEFAULT_SNS, user);
-  const goals = useCollection<Goal>('goals', DEFAULT_GOALS, user);
+  const members = useCollection<Member>('members', DEFAULT_MEMBERS, user, scopePath);
+  const lives = useCollection<LiveEvent>('lives', DEFAULT_LIVES, user, scopePath);
+  const songs = useCollection<Song>('songs', DEFAULT_SONGS, user, scopePath);
+  const videos = useCollection<Video>('videos', DEFAULT_VIDEOS, user, scopePath);
+  const sns = useCollection<SnsAccount>('sns', DEFAULT_SNS, user, scopePath);
+  const goals = useCollection<Goal>('goals', DEFAULT_GOALS, user, scopePath);
   const photoUp = useImageUpload(user);
 
   /** どのメンバーの写真を処理中か */
@@ -162,7 +164,11 @@ export default function Dashboard() {
         <div className="min-w-0 flex-1">
           <h1 className="text-[18px] font-extrabold">DayDream&#10133; Dashboard</h1>
           <p className="text-[11px] text-dd-muted">
-            {user ? 'クラウドに保存されています' : 'この PC に保存されています（ログインで同期）'}
+            {!user
+              ? 'この PC に保存されています（ログインで同期）'
+              : group && useGroupData
+                ? `${group.name} と共有中（${group.members.length} 人）`
+                : 'クラウドに保存されています'}
           </p>
         </div>
       </div>

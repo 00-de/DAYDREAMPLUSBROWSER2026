@@ -63,7 +63,8 @@
         }
       ],
       "icon": "build/icon.ico",
-      "artifactName": "DayDreamBrowser-Setup-${version}.${ext}"
+      "artifactName": "DayDreamBrowser-Setup-${version}.${ext}",
+      "signAndEditExecutable": false
     },
     "nsis": {
       "oneClick": false,
@@ -72,13 +73,9 @@
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
       "shortcutName": "DayDream Browser",
-      "installerIcon": "build/icon.ico",
-      "uninstallerIcon": "build/icon.ico",
-      "installerHeaderIcon": "build/icon.ico",
-      "deleteAppDataOnUninstall": false,
-      "language": "1041"
+      "deleteAppDataOnUninstall": false
     },
-    "compression": "maximum",
+    "compression": "normal",
     "publish": [
       {
         "provider": "github",
