@@ -8,20 +8,37 @@
  */
 
 import { useCallback, useEffect, useState } from 'react';
+import { useAuth } from './hooks/useAuth';
+import { useBackground } from './hooks/useBackground';
 import TitleBar from './components/TitleBar';
 import Home from './components/Home';
 import Browser from './components/Browser';
 import Workspace from './components/Workspace';
 import Dashboard from './components/Dashboard';
+import Mail from './components/Mail';
+import Appearance from './components/Appearance';
 import Account from './components/Account';
 import StartupCheck from './components/StartupCheck';
 import Dock from './components/Dock';
 import type { Tool, ViewName } from './types';
 
-const ORDER: ViewName[] = ['home', 'browser', 'workspace', 'dashboard', 'account', 'check'];
+const ORDER: ViewName[] = [
+  'home',
+  'browser',
+  'workspace',
+  'dashboard',
+  'mail',
+  'appearance',
+  'account',
+  'check',
+];
 
 export default function App() {
   const [view, setView] = useState<ViewName>('home');
+
+  /* 背景の設定を、アプリ全体に反映します */
+  const { user } = useAuth();
+  useBackground(user);
 
   /* ホーム画面からブラウザ画面へ「これを開いて」と伝えるための箱 */
   const [request, setRequest] = useState<{ tool: Tool; nonce: number } | null>(null);
@@ -67,6 +84,18 @@ export default function App() {
         {view === 'dashboard' && (
           <div className="h-full overflow-y-auto">
             <Dashboard />
+          </div>
+        )}
+
+        {view === 'mail' && (
+          <div className="h-full overflow-y-auto">
+            <Mail />
+          </div>
+        )}
+
+        {view === 'appearance' && (
+          <div className="h-full overflow-y-auto">
+            <Appearance />
           </div>
         )}
 

@@ -7,9 +7,9 @@ module.exports = {
         dd: {
           bg:      '#0b0f1a',
           bg2:     '#111726',
-          panel:   '#141a2b',
-          text:    '#e8ecf5',
-          muted:   '#8b97ad',
+          panel:   'rgb(var(--dd-panel-rgb) / <alpha-value>)',
+          text:    'var(--dd-text)',
+          muted:   'var(--dd-muted)',
           accent:  '#5b8cff',
           accent2: '#a06bff',
           ok:      '#3ecf8e',

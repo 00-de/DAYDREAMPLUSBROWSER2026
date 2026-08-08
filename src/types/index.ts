@@ -68,7 +68,15 @@ export interface Notice {
 }
 
 /** 画面の切り替え */
-export type ViewName = 'home' | 'browser' | 'workspace' | 'dashboard' | 'account' | 'check';
+export type ViewName =
+  | 'home'
+  | 'browser'
+  | 'workspace'
+  | 'dashboard'
+  | 'mail'
+  | 'appearance'
+  | 'account'
+  | 'check';
 
 /* ============================================================
    Workspace 関連
@@ -197,4 +205,56 @@ export interface Goal {
   unit: string;
   deadline: string;
   done: boolean;
+}
+
+/* ============================================================
+   DayDream Mail 関連
+   ============================================================ */
+
+/** 連絡先 */
+export interface Contact {
+  id: string;
+  name: string;
+  email: string;
+  group: 'fan' | 'staff' | 'friend';
+  memberNo: string;
+  note: string;
+}
+
+/** メールのひな形 */
+export interface MailTemplate {
+  id: string;
+  name: string;
+  subject: string;
+  body: string;
+}
+
+/** 送信済み・下書きのメール */
+export interface MailRecord {
+  id: string;
+  to: string;
+  subject: string;
+  body: string;
+  date: string;
+  /** 一斉配信の場合の宛先数 */
+  count?: number;
+}
+
+/** 配信の記録 */
+export interface MailLog {
+  id: string;
+  date: string;
+  subject: string;
+  count: number;
+  status: string;
+  ok: boolean;
+}
+
+/** メール送信の設定 */
+export interface MailSettings {
+  fromName: string;
+  fromEmail: string;
+  apiEndpoint: string;
+  unsubUrl: string;
+  ngWords: string;
 }

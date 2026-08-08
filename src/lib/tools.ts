@@ -33,12 +33,13 @@ export const TOOLS: Tool[] = [
   { id: 'gdrive',   name: 'Google Drive',  category: 'dev', icon: '△',  color: 'from-[#4285f4] to-[#1a73e8]', url: 'https://drive.google.com' },
 
   /* ---------- DayDream ---------- */
-  { id: 'ddsite',   name: 'ファンサイト',   category: 'daydream', icon: '★', color: 'from-[#5b8cff] to-[#a06bff]', url: 'https://daydreamplusfunsite-2026.vercel.app' },
-  { id: 'ddadmin',  name: '管理システム',   category: 'daydream', icon: '⚙', color: 'from-[#a06bff] to-[#5b8cff]', url: 'https://daysreamplussystem-2026.vercel.app/' },
-  { id: 'ddchat',   name: 'DDCHAT',        category: 'daydream', icon: '✉', color: 'from-[#5b8cff] to-[#7c3aed]', url: '' },
-  { id: 'ddmail',   name: 'DayDream Mail', category: 'daydream', icon: '✎', color: 'from-[#6366f1] to-[#a06bff]', url: '' },
-  { id: 'ddlottery',name: '抽選アプリ',     category: 'daydream', icon: '◎', color: 'from-[#ec4899] to-[#be185d]', url: '' },
-  { id: 'ddlight',  name: 'ペンライト',     category: 'daydream', icon: '❋', color: 'from-[#22d3ee] to-[#0891b2]', url: '' },
+  { id: 'ddsite',       name: 'ファンサイト',     category: 'daydream', icon: '★', color: 'from-[#5b8cff] to-[#a06bff]', url: 'https://daydreamplusfunsite-2026.vercel.app' },
+  { id: 'ddadmin',      name: '管理システム',     category: 'daydream', icon: '⚙', color: 'from-[#a06bff] to-[#5b8cff]', url: 'https://daysreamplussystem-2026.vercel.app/' },
+  { id: 'ddchat',       name: 'DDCHAT',          category: 'daydream', icon: '✉', color: 'from-[#5b8cff] to-[#7c3aed]', url: 'https://ddchat-1s39.vercel.app/' },
+  { id: 'ddlight',      name: 'ペンライト',       category: 'daydream', icon: '❋', color: 'from-[#22d3ee] to-[#0891b2]', url: 'https://daydreampenlight-2026.vercel.app/' },
+  { id: 'ddlightAdmin', name: 'ペンライト管理',   category: 'daydream', icon: '❈', color: 'from-[#0891b2] to-[#155e75]', url: 'https://penlightkanrisyadaysreamplus-2026.vercel.app/admin.html' },
+  { id: 'ddlottery',    name: '抽選アプリ',       category: 'daydream', icon: '◎', color: 'from-[#ec4899] to-[#be185d]', url: 'https://livetyusenapp.vercel.app/' },
+  { id: 'ddlotteryAdmin', name: '抽選管理',       category: 'daydream', icon: '◉', color: 'from-[#be185d] to-[#831843]', url: 'https://tyuusenappsystem.vercel.app/' },
 
   /* ---------- 制作 ---------- */
   { id: 'canva',    name: 'Canva',         category: 'media', icon: '▣', color: 'from-[#00c4cc] to-[#7d2ae8]', url: 'https://www.canva.com' },

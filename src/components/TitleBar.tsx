@@ -21,6 +21,8 @@ const TABS: { id: ViewName; label: string }[] = [
   { id: 'browser', label: 'ブラウザ' },
   { id: 'workspace', label: 'Workspace' },
   { id: 'dashboard', label: 'DayDream' },
+  { id: 'mail', label: 'メール' },
+  { id: 'appearance', label: '見た目' },
   { id: 'account', label: 'アカウント' },
   { id: 'check', label: '起動チェック' },
 ];

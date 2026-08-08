@@ -45,6 +45,8 @@ if exist "Account.tsx"        move /y "Account.tsx"        "src\components\" >nu
 if exist "Dashboard.tsx"      move /y "Dashboard.tsx"      "src\components\" >nul
 if exist "DashboardParts.tsx" move /y "DashboardParts.tsx" "src\components\" >nul
 if exist "MemberPhoto.tsx"    move /y "MemberPhoto.tsx"    "src\components\" >nul
+if exist "Mail.tsx"           move /y "Mail.tsx"           "src\components\" >nul
+if exist "Appearance.tsx"     move /y "Appearance.tsx"     "src\components\" >nul
 
 rem --- src\lib フォルダへ ---
 if exist "firebase.ts"        move /y "firebase.ts"        "src\lib\" >nul
@@ -52,6 +54,8 @@ if exist "tools.ts"           move /y "tools.ts"           "src\lib\" >nul
 if exist "storage.ts"         move /y "storage.ts"         "src\lib\" >nul
 if exist "daydream.ts"        move /y "daydream.ts"        "src\lib\" >nul
 if exist "status.ts"          move /y "status.ts"          "src\lib\" >nul
+if exist "mail.ts"            move /y "mail.ts"            "src\lib\" >nul
+if exist "themes.ts"          move /y "themes.ts"          "src\lib\" >nul
 
 rem --- build フォルダへ ---
 if exist "icon.ico"           move /y "icon.ico"           "build\" >nul
@@ -63,6 +67,8 @@ if exist "useAuth.ts"         move /y "useAuth.ts"         "src\hooks\" >nul
 if exist "useSync.ts"         move /y "useSync.ts"         "src\hooks\" >nul
 if exist "useDashboard.ts"    move /y "useDashboard.ts"    "src\hooks\" >nul
 if exist "useImageUpload.ts"  move /y "useImageUpload.ts"  "src\hooks\" >nul
+if exist "useMailSettings.ts" move /y "useMailSettings.ts" "src\hooks\" >nul
+if exist "useBackground.ts"   move /y "useBackground.ts"   "src\hooks\" >nul
 
 rem --- src\types フォルダへ ---
 if exist "index.ts"           move /y "index.ts"           "src\types\" >nul
@@ -105,7 +111,13 @@ call :CHECK "src\hooks\useAuth.ts"
 call :CHECK "src\components\Dashboard.tsx"
 call :CHECK "src\components\DashboardParts.tsx"
 call :CHECK "src\lib\daydream.ts"
+call :CHECK "src\components\Mail.tsx"
 call :CHECK "src\lib\status.ts"
+call :CHECK "src\components\Appearance.tsx"
+call :CHECK "src\lib\mail.ts"
+call :CHECK "src\lib\themes.ts"
+call :CHECK "src\hooks\useBackground.ts"
+call :CHECK "src\hooks\useMailSettings.ts"
 call :CHECK "src\hooks\useSync.ts"
 call :CHECK "src\components\MemberPhoto.tsx"
 call :CHECK "src\hooks\useDashboard.ts"

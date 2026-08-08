@@ -3,6 +3,28 @@
 @tailwind utilities;
 
 @layer base {
+  /* 背景の既定値。useBackground が実行時に書き換えます。 */
+  :root {
+    --dd-bg-color: #0b0f1a;
+    --dd-bg-image: radial-gradient(1200px 700px at 10% -10%, #21306b 0%, transparent 60%),
+      radial-gradient(900px 600px at 100% 0%, #4a2273 0%, transparent 55%);
+    --dd-panel-rgb: 20 26 43;
+    --dd-dim: 0.4;
+    --dd-blur: 0px;
+
+    /* 文字と線の色。明るい背景のときに切り替わります。 */
+    --dd-text: #e8ecf5;
+    --dd-muted: #8b97ad;
+    --dd-line: 255 255 255;
+  }
+
+  /* 明るい背景のとき、文字と線を暗く切り替えます */
+  html[data-tone='light'] {
+    --dd-text: #1e2436;
+    --dd-muted: #5c6478;
+    --dd-line: 20 26 43;
+  }
+
   html,
   body,
   #root {
@@ -10,10 +32,107 @@
   }
 
   body {
-    @apply bg-dd-bg text-dd-text font-sans antialiased overflow-hidden;
-    background-image:
-      radial-gradient(1200px 700px at 10% -10%, #21306b 0%, transparent 60%),
-      radial-gradient(900px 600px at 100% 0%, #4a2273 0%, transparent 55%);
+    @apply font-sans antialiased overflow-hidden;
+    color: var(--dd-text);
+    background-color: var(--dd-bg-color);
+    background-image: var(--dd-bg-image);
+  }
+
+  /* ------------------------------------------------------------
+     明るい背景での見え方の調整
+     白い半透明のままだと、明るい背景では境目が見えなくなるため、
+     暗い半透明に置き換えます。
+     ------------------------------------------------------------ */
+  html[data-tone='light'] .border-white\/10 {
+    border-color: rgba(20, 26, 43, 0.13);
+  }
+  html[data-tone='light'] .border-white\/5 {
+    border-color: rgba(20, 26, 43, 0.07);
+  }
+  html[data-tone='light'] .border-white\/15,
+  html[data-tone='light'] .border-white\/20 {
+    border-color: rgba(20, 26, 43, 0.2);
+  }
+
+  html[data-tone='light'] .bg-white\/\[0\.03\] {
+    background-color: rgba(20, 26, 43, 0.03);
+  }
+  html[data-tone='light'] .bg-white\/\[0\.05\] {
+    background-color: rgba(255, 255, 255, 0.55);
+  }
+  html[data-tone='light'] .bg-white\/\[0\.06\] {
+    background-color: rgba(255, 255, 255, 0.65);
+  }
+  html[data-tone='light'] .bg-white\/\[0\.07\]:hover,
+  html[data-tone='light'] .hover\:bg-white\/\[0\.07\]:hover {
+    background-color: rgba(255, 255, 255, 0.8);
+  }
+  html[data-tone='light'] .bg-white\/\[0\.09\],
+  html[data-tone='light'] .bg-white\/\[0\.11\],
+  html[data-tone='light'] .bg-white\/\[0\.12\],
+  html[data-tone='light'] .bg-white\/\[0\.14\] {
+    background-color: rgba(255, 255, 255, 0.85);
+  }
+  html[data-tone='light'] .bg-white\/10 {
+    background-color: rgba(20, 26, 43, 0.08);
+  }
+  html[data-tone='light'] .bg-white\/5 {
+    background-color: rgba(20, 26, 43, 0.04);
+  }
+
+  html[data-tone='light'] .hover\:bg-white\/10:hover {
+    background-color: rgba(20, 26, 43, 0.09);
+  }
+
+  /* タイトルバーと Dock の下地 */
+  html[data-tone='light'] .bg-black\/30,
+  html[data-tone='light'] .bg-black\/25,
+  html[data-tone='light'] .bg-black\/20,
+  html[data-tone='light'] .bg-black\/15,
+  html[data-tone='light'] .bg-black\/10 {
+    background-color: rgba(255, 255, 255, 0.55);
+  }
+  html[data-tone='light'] .bg-black\/45 {
+    background-color: rgba(255, 255, 255, 0.72);
+  }
+
+  /* 方眼の線 */
+  html[data-tone='light'] #ws-canvas > div:first-child {
+    filter: invert(1);
+    opacity: 0.18;
+  }
+
+  /* スクロールバー */
+  html[data-tone='light'] ::-webkit-scrollbar-thumb {
+    background: rgba(20, 26, 43, 0.2);
+  }
+
+  /* 背景画像を使うとき */
+  html[data-bg='image'] body {
+    background-image: none;
+  }
+
+  html[data-bg='image'] body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    background-image: var(--dd-photo);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    filter: blur(var(--dd-blur));
+    /* ぼかしたときに端が透けないよう、少し広げます */
+    transform: scale(1.06);
+  }
+
+  /* 文字を読みやすくするための覆い */
+  html[data-bg='image'] body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background: rgba(7, 10, 18, var(--dd-dim));
   }
 
   ::-webkit-scrollbar {
