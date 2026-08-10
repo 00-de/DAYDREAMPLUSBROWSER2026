@@ -12,6 +12,7 @@ import Clock from './Clock';
 import SearchBar from './SearchBar';
 import ToolTile from './ToolTile';
 import NoticePanel from './NoticePanel';
+import LocalAppSection from './LocalAppSection';
 import { CATEGORIES, DEFAULT_FAVORITES, TOOLS, findTool } from '../lib/tools';
 import { loadLocal, pushRecent, saveLocal } from '../lib/storage';
 import type { Tool } from '../types';
@@ -176,6 +177,9 @@ export default function Home({ onOpenInApp }: Props) {
               </div>
             </section>
           )}
+
+          {/* パソコンのアプリ */}
+          <LocalAppSection />
 
           {/* すべてのツール */}
           <section>

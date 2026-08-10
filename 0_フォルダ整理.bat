@@ -50,6 +50,7 @@ if exist "Mail.tsx"           move /y "Mail.tsx"           "src\components\" >nu
 if exist "Appearance.tsx"     move /y "Appearance.tsx"     "src\components\" >nul
 if exist "Updater.tsx"        move /y "Updater.tsx"        "src\components\" >nul
 if exist "GroupPanel.tsx"     move /y "GroupPanel.tsx"     "src\components\" >nul
+if exist "LocalAppSection.tsx" move /y "LocalAppSection.tsx" "src\components\" >nul
 
 rem --- src\lib フォルダへ ---
 if exist "firebase.ts"        move /y "firebase.ts"        "src\lib\" >nul
@@ -73,6 +74,7 @@ if exist "useImageUpload.ts"  move /y "useImageUpload.ts"  "src\hooks\" >nul
 if exist "useMailSettings.ts" move /y "useMailSettings.ts" "src\hooks\" >nul
 if exist "useBackground.ts"   move /y "useBackground.ts"   "src\hooks\" >nul
 if exist "useGroup.ts"        move /y "useGroup.ts"        "src\hooks\" >nul
+if exist "useLocalApps.ts"    move /y "useLocalApps.ts"    "src\hooks\" >nul
 
 rem --- src\types フォルダへ ---
 if exist "index.ts"           move /y "index.ts"           "src\types\" >nul
@@ -121,10 +123,12 @@ call :CHECK "src\lib\status.ts"
 call :CHECK "src\components\Appearance.tsx"
 call :CHECK "src\components\Updater.tsx"
 call :CHECK "src\components\GroupPanel.tsx"
+call :CHECK "src\components\LocalAppSection.tsx"
 call :CHECK "src\lib\mail.ts"
 call :CHECK "src\lib\themes.ts"
 call :CHECK "src\hooks\useBackground.ts"
 call :CHECK "src\hooks\useGroup.ts"
+call :CHECK "src\hooks\useLocalApps.ts"
 call :CHECK "src\hooks\useMailSettings.ts"
 call :CHECK "src\hooks\useSync.ts"
 call :CHECK "src\components\MemberPhoto.tsx"

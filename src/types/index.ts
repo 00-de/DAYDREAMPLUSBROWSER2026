@@ -24,6 +24,14 @@ export interface DDBridge {
   };
   app: {
     getInfo: () => Promise<AppInfo>;
+    /** ファイルを選ぶ画面を出します */
+    pickExe: () => Promise<{ path: string; name: string } | null>;
+    /** 指定したアプリを起動します */
+    launch: (filePath: string) => Promise<{ ok: boolean; error?: string }>;
+    /** そのアプリが今もあるか確かめます */
+    exists: (filePath: string) => Promise<boolean>;
+    /** よくある場所からアプリを探します */
+    findKnown: () => Promise<{ id: string; name: string; path: string }[]>;
   };
   shell: {
     openExternal: (url: string) => Promise<boolean>;
@@ -321,3 +329,20 @@ export interface Group {
 
 /** いま使っている保存先 */
 export type DataScope = 'personal' | 'group';
+
+
+/* ============================================================
+   パソコンのアプリ
+   ============================================================ */
+
+/** 登録したパソコンのアプリ */
+export interface LocalApp {
+  id: string;
+  name: string;
+  /** 実行ファイルの場所 */
+  path: string;
+  /** 表示する記号 */
+  icon: string;
+  /** Tailwind のグラデーション指定 */
+  color: string;
+}

@@ -7,7 +7,7 @@
  * ============================================================
  */
 
-const { app, BrowserWindow, ipcMain, shell } = require('electron');
+const { app, BrowserWindow, ipcMain, shell, dialog } = require('electron');
 const path = require('path');
 const { setupUpdater } = require('./updater.cjs');
 
@@ -157,6 +157,109 @@ ipcMain.handle('app:getInfo', () => {
     platform: process.platform,
     arch: process.arch,
   };
+});
+
+/* ============================================================
+   パソコンのアプリを開く
+   ============================================================ */
+
+/** ファイルを選ぶ画面を出します */
+ipcMain.handle('app:pickExe', async () => {
+  const r = await dialog.showOpenDialog(mainWindow, {
+    title: '起動したいアプリを選んでください',
+    properties: ['openFile'],
+    filters: [
+      { name: 'アプリ', extensions: ['exe', 'lnk', 'bat', 'cmd'] },
+      { name: 'すべて', extensions: ['*'] },
+    ],
+  });
+
+  if (r.canceled || r.filePaths.length === 0) return null;
+
+  const filePath = r.filePaths[0];
+  const name = path.basename(filePath).replace(/\.(exe|lnk|bat|cmd)$/i, '');
+
+  return { path: filePath, name };
+});
+
+/** 指定したアプリを起動します */
+ipcMain.handle('app:launch', async (_event, filePath) => {
+  if (typeof filePath !== 'string' || !filePath) {
+    return { ok: false, error: '場所が指定されていません。' };
+  }
+
+  try {
+    // shell.openPath は、実行ファイルもショートカットも開けます
+    const err = await shell.openPath(filePath);
+    if (err) return { ok: false, error: err };
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, error: String(e?.message ?? e) };
+  }
+});
+
+/** そのアプリが今もあるか確かめます */
+ipcMain.handle('app:exists', async (_event, filePath) => {
+  if (typeof filePath !== 'string' || !filePath) return false;
+  try {
+    const fs = require('fs');
+    return fs.existsSync(filePath);
+  } catch {
+    return false;
+  }
+});
+
+/** よくある場所からアプリを探します */
+ipcMain.handle('app:findKnown', async () => {
+  const fs = require('fs');
+  const os = require('os');
+  const home = os.homedir();
+
+  /** 探す先の候補 */
+  const bases = [
+    process.env['ProgramFiles'],
+    process.env['ProgramFiles(x86)'],
+    process.env['LOCALAPPDATA'],
+    process.env['APPDATA'],
+    path.join(home, 'AppData', 'Local', 'Programs'),
+  ].filter(Boolean);
+
+  /** 探すアプリの一覧 */
+  const targets = [
+    { id: 'capcut',    name: 'CapCut',            dirs: ['CapCut'],                exe: 'CapCut.exe' },
+    { id: 'davinci',   name: 'DaVinci Resolve',   dirs: ['Blackmagic Design/DaVinci Resolve'], exe: 'Resolve.exe' },
+    { id: 'blender',   name: 'Blender',           dirs: ['Blender Foundation/Blender 4.2', 'Blender Foundation/Blender 4.1', 'Blender Foundation/Blender 4.0', 'Blender Foundation/Blender 3.6'], exe: 'blender.exe' },
+    { id: 'obs',       name: 'OBS Studio',        dirs: ['obs-studio/bin/64bit'],   exe: 'obs64.exe' },
+    { id: 'audacity',  name: 'Audacity',          dirs: ['Audacity'],               exe: 'Audacity.exe' },
+    { id: 'vscode',    name: 'VS Code',           dirs: ['Microsoft VS Code'],      exe: 'Code.exe' },
+    { id: 'ghdesktop', name: 'GitHub Desktop',    dirs: ['GitHubDesktop'],          exe: 'GitHubDesktop.exe' },
+    { id: 'vlc',       name: 'VLC',               dirs: ['VideoLAN/VLC'],           exe: 'vlc.exe' },
+    { id: 'voicevox',  name: 'VOICEVOX',          dirs: ['VOICEVOX'],               exe: 'VOICEVOX.exe' },
+    { id: 'discord',   name: 'Discord',           dirs: ['Discord'],                exe: 'Update.exe' },
+    { id: 'bandicam',  name: 'Bandicam',          dirs: ['Bandicam'],               exe: 'bdcam.exe' },
+  ];
+
+  const found = [];
+
+  for (const t of targets) {
+    for (const base of bases) {
+      let hit = null;
+
+      for (const d of t.dirs) {
+        const p = path.join(base, ...d.split('/'), t.exe);
+        try {
+          if (fs.existsSync(p)) { hit = p; break; }
+        } catch { /* 読めない場所は飛ばします */ }
+      }
+
+      if (hit) {
+        found.push({ id: t.id, name: t.name, path: hit });
+        break;
+      }
+    }
+  }
+
+  return found;
 });
 
 ipcMain.handle('shell:openExternal', (_event, url) => {

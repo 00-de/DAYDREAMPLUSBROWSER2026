@@ -18,9 +18,17 @@ contextBridge.exposeInMainWorld('dd', {
     isMaximized: () => ipcRenderer.invoke('window:isMaximized'),
   },
 
-  /** アプリ情報の取得 */
+  /** アプリ情報の取得と、パソコンのアプリの起動 */
   app: {
     getInfo: () => ipcRenderer.invoke('app:getInfo'),
+    /** ファイルを選ぶ画面を出します */
+    pickExe: () => ipcRenderer.invoke('app:pickExe'),
+    /** 指定したアプリを起動します */
+    launch: (filePath) => ipcRenderer.invoke('app:launch', filePath),
+    /** そのアプリが今もあるか確かめます */
+    exists: (filePath) => ipcRenderer.invoke('app:exists', filePath),
+    /** よくある場所からアプリを探します */
+    findKnown: () => ipcRenderer.invoke('app:findKnown'),
   },
 
   /** 既定のブラウザで URL を開く */
