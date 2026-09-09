@@ -15,6 +15,7 @@ export const CATEGORIES = [
   { id: 'daydream', label: 'DayDream' },
   { id: 'media', label: '制作' },
   { id: 'sns', label: 'SNS' },
+  { id: 'service', label: 'サービス' },
 ] as const;
 
 export const TOOLS: Tool[] = [
@@ -50,6 +51,13 @@ export const TOOLS: Tool[] = [
   { id: 'x',        name: 'X',             category: 'sns', icon: '𝕏', color: 'from-[#1f2937] to-[#000000]', url: 'https://x.com' },
   { id: 'instagram',name: 'Instagram',     category: 'sns', icon: '◙', color: 'from-[#f97316] to-[#c026d3]', url: 'https://www.instagram.com' },
   { id: 'tiktok',   name: 'TikTok',        category: 'sns', icon: '♫', color: 'from-[#0ea5e9] to-[#e11d48]', url: 'https://www.tiktok.com' },
+
+  /* ---------- サービス ---------- */
+  { id: 'onamae',   name: 'お名前.com',        category: 'service', icon: '◆', color: 'from-[#e11d48] to-[#9f1239]', url: 'https://navi.onamae.com/login' },
+  { id: 'resend',   name: 'Resend',           category: 'service', icon: '✉', color: 'from-[#374151] to-[#0b0f1a]', url: 'https://resend.com/emails' },
+  { id: 'tavily',   name: 'Tavily',           category: 'service', icon: '◇', color: 'from-[#0ea5e9] to-[#0369a1]', url: 'https://app.tavily.com' },
+  { id: 'gcloud',   name: 'Google Cloud 請求', category: 'service', icon: '△', color: 'from-[#4285f4] to-[#1a73e8]', url: 'https://console.cloud.google.com/billing/01A90E-6FA6D7-2C79C1?project=daysreamsystem2026-500423' },
+  { id: 'dojoclip', name: '動画圧縮',          category: 'service', icon: '▽', color: 'from-[#8b5cf6] to-[#6d28d9]', url: 'https://dojoclip.com/ja/video-compressor' },
 ];
 
 /** 初期のお気に入り（初回起動時のみ使用） */

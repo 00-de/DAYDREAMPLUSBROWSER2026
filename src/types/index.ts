@@ -87,7 +87,7 @@ export interface CheckItem {
 export interface Tool {
   id: string;
   name: string;
-  category: 'ai' | 'dev' | 'daydream' | 'media' | 'sns';
+  category: 'ai' | 'dev' | 'daydream' | 'media' | 'sns' | 'service';
   /** 表示する記号（絵文字または1文字） */
   icon: string;
   /** Tailwind のグラデーション指定 */
