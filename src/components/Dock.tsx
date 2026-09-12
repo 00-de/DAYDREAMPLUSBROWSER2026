@@ -9,7 +9,9 @@
  */
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { TOOLS, findTool } from '../lib/tools';
+import { useTools } from '../hooks/useTools';
+import { useAuth } from '../hooks/useAuth';
+import { useGroup } from '../hooks/useGroup';
 import { loadLocal, saveLocal } from '../lib/storage';
 import type { Tool } from '../types';
 
@@ -23,6 +25,10 @@ const MAX_SCALE = 1.7;
 const RANGE = 110;
 
 export default function Dock({ onOpen }: Props) {
+  const { user } = useAuth();
+  const { scopePath } = useGroup(user);
+  const { tools: TOOLS, findTool } = useTools(user, scopePath);
+
   const [items, setItems] = useState<string[]>(() =>
     loadLocal<string[]>('dock', loadLocal<string[]>('favorites', [])),
   );

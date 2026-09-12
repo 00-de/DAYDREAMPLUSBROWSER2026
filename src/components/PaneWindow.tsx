@@ -12,7 +12,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import WebFrame from './WebFrame';
 import { MIN_H, MIN_W } from '../hooks/useWorkspace';
-import { TOOLS, findTool } from '../lib/tools';
+import { useTools } from '../hooks/useTools';
+import { useAuth } from '../hooks/useAuth';
+import { useGroup } from '../hooks/useGroup';
 import type { Pane, SnapZone, Tab, Tool } from '../types';
 
 interface Props {
@@ -49,6 +51,10 @@ export default function PaneWindow({
   onCloseTab,
   onUpdateTab,
 }: Props) {
+  const { user } = useAuth();
+  const { scopePath } = useGroup(user);
+  const { tools: TOOLS, findTool } = useTools(user, scopePath);
+
   const [dragging, setDragging] = useState(false);
   const [resizing, setResizing] = useState<Dir | null>(null);
   const [picker, setPicker] = useState(false);
@@ -269,7 +275,7 @@ export default function PaneWindow({
       {/* ---------- ウィンドウ内タブ ---------- */}
       <div
         onMouseDown={(e) => e.stopPropagation()}
-        className="flex h-[26px] flex-none items-center gap-0.5 overflow-x-auto border-b border-white/10 bg-black/20 px-1.5"
+        className="flex max-h-[54px] flex-none flex-wrap items-center gap-0.5 overflow-y-auto border-b border-white/10 bg-black/20 px-1.5 py-1"
       >
         {tabs.map((t) => {
           const tool = findTool(t.toolId);

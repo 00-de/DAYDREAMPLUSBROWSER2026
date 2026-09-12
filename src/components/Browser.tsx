@@ -9,7 +9,9 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import WebFrame from './WebFrame';
-import { TOOLS, findTool } from '../lib/tools';
+import { useTools } from '../hooks/useTools';
+import { useAuth } from '../hooks/useAuth';
+import { useGroup } from '../hooks/useGroup';
 import { loadLocal, saveLocal } from '../lib/storage';
 import type { Tab, Tool } from '../types';
 
@@ -21,6 +23,10 @@ interface Props {
 }
 
 export default function Browser({ request }: Props) {
+  const { user } = useAuth();
+  const { scopePath } = useGroup(user);
+  const { tools: TOOLS, findTool } = useTools(user, scopePath);
+
   const [tabs, setTabs] = useState<Tab[]>(() => loadLocal<Tab[]>('tabs', []));
   const [activeId, setActiveId] = useState<string | null>(null);
   const [picker, setPicker] = useState(false);
@@ -103,6 +109,18 @@ export default function Browser({ request }: Props) {
     [activeId],
   );
 
+  /** 選択中のタブ以外を、すべて閉じます */
+  const closeOthers = useCallback(() => {
+    setTabs((prev) => {
+      const keep = prev.find((t) => t.id === activeId);
+      if (!keep) return prev;
+
+      // 閉じたものは、戻せるように控えておきます
+      prev.filter((t) => t.id !== activeId).forEach((t) => closedStack.current.push(t));
+      return [keep];
+    });
+  }, [activeId]);
+
   /** 直前に閉じたタブを戻す */
   const reopenTab = useCallback(() => {
     const t = closedStack.current.pop();
@@ -172,51 +190,75 @@ export default function Browser({ request }: Props) {
 
   return (
     <div className="flex h-full flex-col">
-      {/* ============ タブ列 ============ */}
-      <div className="flex flex-none items-end gap-0.5 overflow-x-auto border-b border-white/10 bg-black/25 px-2 pt-1.5 backdrop-blur-[18px]">
-        {tabs.map((t) => {
-          const tool = findTool(t.toolId);
-          const on = t.id === activeId;
-          return (
-            <div
-              key={t.id}
-              onClick={() => setActiveId(t.id)}
-              className={`group flex h-[34px] max-w-[190px] flex-none cursor-pointer items-center gap-1.5 rounded-t-lg px-2.5 text-[11.5px] transition
-                ${on
-                  ? 'bg-dd-panel/95 text-dd-text'
-                  : 'bg-white/[0.04] text-dd-muted hover:bg-white/[0.09]'}`}
+      {/* ============ タブ一覧 ============ */}
+      <div className="flex-none border-b border-white/10 bg-black/25 px-2 py-1.5 backdrop-blur-[18px]">
+        {/* 11列で並べ、増えたぶんは下の段へ折り返します。
+            3段を超えると、この中だけを縦にスクロールします。 */}
+        <div className="grid max-h-[104px] grid-cols-11 gap-1 overflow-y-auto pr-0.5">
+          {tabs.map((t) => {
+            const tool = findTool(t.toolId);
+            const on = t.id === activeId;
+            return (
+              <div
+                key={t.id}
+                onClick={() => setActiveId(t.id)}
+                title={t.title}
+                className={`group flex h-[30px] min-w-0 cursor-pointer items-center gap-1 rounded-lg px-1.5 text-[10.5px] transition
+                  ${on
+                    ? 'bg-dd-panel/95 text-dd-text ring-1 ring-dd-accent/50'
+                    : 'bg-white/[0.05] text-dd-muted hover:bg-white/[0.11]'}`}
+              >
+                <span
+                  className={`grid h-4 w-4 flex-none place-items-center rounded bg-gradient-to-br text-[9px] text-white ${
+                    tool?.color ?? 'from-dd-accent to-dd-accent2'
+                  }`}
+                >
+                  {t.loading ? '◌' : (tool?.icon ?? '□')}
+                </span>
+
+                <span className="min-w-0 flex-1 truncate">{t.title}</span>
+
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    closeTab(t.id);
+                  }}
+                  title="タブを閉じる"
+                  className="grid h-4 w-4 flex-none place-items-center rounded text-[10px] opacity-0 transition hover:bg-white/20 group-hover:opacity-100"
+                >
+                  ✕
+                </button>
+              </div>
+            );
+          })}
+
+          {/* 新しいタブ。ちょうど11の倍数のときは次の段の先頭に来ます。 */}
+          <button
+            onClick={() => setPicker(true)}
+            title="新しいタブ"
+            className="grid h-[30px] place-items-center rounded-lg border border-dashed border-white/15 text-[14px] text-dd-muted transition hover:border-white/30 hover:bg-white/10 hover:text-dd-text"
+          >
+            ＋
+          </button>
+        </div>
+
+        {/* タブが多いときの案内 */}
+        {tabs.length >= 22 && (
+          <div className="mt-1.5 flex items-center gap-2 px-0.5 text-[10px] text-dd-muted">
+            <span>{tabs.length} 枚開いています</span>
+            <span className="h-px flex-1 bg-white/10" />
+            <button
+              onClick={() => {
+                if (window.confirm('選択中のタブ以外を、すべて閉じますか。')) {
+                  closeOthers();
+                }
+              }}
+              className="transition hover:text-dd-text"
             >
-              <span
-                className={`grid h-4 w-4 flex-none place-items-center rounded bg-gradient-to-br text-[9px] text-white ${
-                  tool?.color ?? 'from-dd-accent to-dd-accent2'
-                }`}
-              >
-                {t.loading ? '◌' : (tool?.icon ?? '□')}
-              </span>
-
-              <span className="min-w-0 flex-1 truncate">{t.title}</span>
-
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  closeTab(t.id);
-                }}
-                title="タブを閉じる"
-                className="grid h-4 w-4 flex-none place-items-center rounded text-[10px] opacity-0 transition hover:bg-white/15 group-hover:opacity-100"
-              >
-                ✕
-              </button>
-            </div>
-          );
-        })}
-
-        <button
-          onClick={() => setPicker(true)}
-          title="新しいタブ"
-          className="mb-0.5 ml-1 grid h-[30px] w-8 flex-none place-items-center rounded-lg text-[15px] text-dd-muted transition hover:bg-white/10 hover:text-dd-text"
-        >
-          ＋
-        </button>
+              他をすべて閉じる
+            </button>
+          </div>
+        )}
       </div>
 
       {/* ============ アドレスバー ============ */}

@@ -3,7 +3,11 @@
  *  ツールカタログ
  * ------------------------------------------------------------
  *  ホーム画面・Dock から起動できるツールの一覧です。
- *  追加したいときは、このファイルに1行足すだけです。
+ *
+ *  ここに書いてあるのは、最初から入っている分です。
+ *  あとから追加したものは Firestore に保存され、
+ *  アプリを作り直さなくても全員に反映されます。
+ *  （useTools.ts が両方をまとめて扱います）
  * ============================================================
  */
 
@@ -18,7 +22,7 @@ export const CATEGORIES = [
   { id: 'service', label: 'サービス' },
 ] as const;
 
-export const TOOLS: Tool[] = [
+export const BUILT_IN_TOOLS: Tool[] = [
   /* ---------- AI ---------- */
   { id: 'claude',   name: 'Claude',        category: 'ai',  icon: '✳',  color: 'from-[#d97757] to-[#b85c3e]', url: 'https://claude.ai' },
   { id: 'chatgpt',  name: 'ChatGPT',       category: 'ai',  icon: '◍',  color: 'from-[#10a37f] to-[#0d7d61]', url: 'https://chatgpt.com' },
@@ -26,6 +30,8 @@ export const TOOLS: Tool[] = [
   { id: 'suno',     name: 'SUNO',          category: 'ai',  icon: '♪',  color: 'from-[#f59e0b] to-[#d97706]', url: 'https://suno.com' },
   { id: 'openai',   name: 'OpenAI',        category: 'ai',  icon: '⌾',  color: 'from-[#4b5563] to-[#1f2937]', url: 'https://platform.openai.com' },
   { id: 'eleven',   name: 'ElevenLabs',    category: 'ai',  icon: '◑',  color: 'from-[#8b5cf6] to-[#6d28d9]', url: 'https://elevenlabs.io' },
+  { id: 'domoai',   name: 'DomoAI',        category: 'ai',  icon: '◭',  color: 'from-[#ec4899] to-[#a21caf]', url: 'https://www.domoai.app/ja/home' },
+  { id: 'stability',name: 'Stability AI',  category: 'ai',  icon: '◮',  color: 'from-[#7c3aed] to-[#4c1d95]', url: 'https://platform.stability.ai/account/credits' },
 
   /* ---------- 開発 ---------- */
   { id: 'github',   name: 'GitHub',        category: 'dev', icon: '⌥',  color: 'from-[#4b5563] to-[#111827]', url: 'https://github.com' },
@@ -63,7 +69,36 @@ export const TOOLS: Tool[] = [
 /** 初期のお気に入り（初回起動時のみ使用） */
 export const DEFAULT_FAVORITES = ['claude', 'github', 'vercel', 'firebase', 'suno', 'ddsite'];
 
-/** id からツールを引く */
-export function findTool(id: string): Tool | undefined {
-  return TOOLS.find((t) => t.id === id);
+/**
+ * 最初から入っているツールを id で引きます。
+ * 追加分も含めて引きたい場合は、useTools の findTool をお使いください。
+ */
+export function findBuiltIn(id: string): Tool | undefined {
+  return BUILT_IN_TOOLS.find((t) => t.id === id);
 }
+
+/** 選べる記号（アイコン）の候補 */
+export const ICON_CHOICES = [
+  '★', '✦', '✧', '◆', '◇', '●', '○', '■', '□', '▲', '△', '▼', '▽',
+  '◎', '◉', '◍', '◐', '◑', '◒', '◓', '◭', '◮', '❋', '❈', '✳', '✵',
+  '♪', '♫', '♬', '✉', '✎', '✂', '⌘', '⌥', '⚙', '⌾', '⊞', '▣', '▤',
+  '▥', '▦', '▧', '▨', '▩', '⬢', '⬣', '◈', '◧', '◨',
+];
+
+/** 選べる色の候補 */
+export const COLOR_CHOICES = [
+  { id: 'blue',    label: '青',       value: 'from-[#5b8cff] to-[#3b5bdb]' },
+  { id: 'purple',  label: '紫',       value: 'from-[#a06bff] to-[#7c3aed]' },
+  { id: 'pink',    label: '桃',       value: 'from-[#ec4899] to-[#be185d]' },
+  { id: 'red',     label: '赤',       value: 'from-[#ef4444] to-[#b91c1c]' },
+  { id: 'orange',  label: '橙',       value: 'from-[#f97316] to-[#c2410c]' },
+  { id: 'amber',   label: '黄',       value: 'from-[#f59e0b] to-[#d97706]' },
+  { id: 'green',   label: '緑',       value: 'from-[#22c55e] to-[#15803d]' },
+  { id: 'teal',    label: '青緑',     value: 'from-[#14b8a6] to-[#0f766e]' },
+  { id: 'cyan',    label: '水',       value: 'from-[#22d3ee] to-[#0891b2]' },
+  { id: 'indigo',  label: '藍',       value: 'from-[#6366f1] to-[#4338ca]' },
+  { id: 'gray',    label: '灰',       value: 'from-[#4b5563] to-[#1f2937]' },
+  { id: 'black',   label: '黒',       value: 'from-[#374151] to-[#0b0f1a]' },
+  { id: 'gradient',label: '青紫',     value: 'from-[#5b8cff] to-[#a06bff]' },
+  { id: 'sunset',  label: '夕焼け',   value: 'from-[#f97316] to-[#be185d]' },
+];

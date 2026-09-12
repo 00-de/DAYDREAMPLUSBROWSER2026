@@ -13,7 +13,11 @@ import SearchBar from './SearchBar';
 import ToolTile from './ToolTile';
 import NoticePanel from './NoticePanel';
 import LocalAppSection from './LocalAppSection';
-import { CATEGORIES, DEFAULT_FAVORITES, TOOLS, findTool } from '../lib/tools';
+import { CATEGORIES, DEFAULT_FAVORITES } from '../lib/tools';
+import { useTools } from '../hooks/useTools';
+import { useAuth } from '../hooks/useAuth';
+import { useGroup } from '../hooks/useGroup';
+import ToolEditor from './ToolEditor';
 import { loadLocal, pushRecent, saveLocal } from '../lib/storage';
 import type { Tool } from '../types';
 
@@ -23,6 +27,14 @@ interface Props {
 }
 
 export default function Home({ onOpenInApp }: Props) {
+  const { user } = useAuth();
+  const { scopePath } = useGroup(user);
+  const tl = useTools(user, scopePath);
+
+  /** 編集中のツール。'new' なら新規追加。 */
+  const [editing, setEditing] = useState<Tool | 'new' | null>(null);
+  const [showHidden, setShowHidden] = useState(false);
+
   const [favorites, setFavorites] = useState<string[]>([]);
   const [recents, setRecents] = useState<string[]>([]);
   const [category, setCategory] = useState<string>('all');
@@ -72,7 +84,7 @@ export default function Home({ onOpenInApp }: Props) {
       if (!e.ctrlKey || e.shiftKey || e.altKey) return;
       const n = Number(e.key);
       if (!Number.isInteger(n) || n < 1 || n > 9) return;
-      const tool = findTool(favorites[n - 1] ?? '');
+      const tool = tl.findTool(favorites[n - 1] ?? '');
       if (tool) {
         e.preventDefault();
         openTool(tool);
@@ -80,11 +92,11 @@ export default function Home({ onOpenInApp }: Props) {
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [favorites, openTool]);
+  }, [favorites, openTool, tl]);
 
-  const favoriteTools = favorites.map(findTool).filter((t): t is Tool => !!t);
-  const recentTools = recents.map(findTool).filter((t): t is Tool => !!t);
-  const listed = category === 'all' ? TOOLS : TOOLS.filter((t) => t.category === category);
+  const favoriteTools = favorites.map(tl.findTool).filter((t): t is Tool => !!t);
+  const recentTools = recents.map(tl.findTool).filter((t): t is Tool => !!t);
+  const listed = category === 'all' ? tl.tools : tl.tools.filter((t) => t.category === category);
 
   return (
     <div className="mx-auto w-full max-w-6xl animate-rise px-8 pb-28 pt-10">
@@ -185,8 +197,17 @@ export default function Home({ onOpenInApp }: Props) {
           <section>
             <h2 className="mb-3 flex items-center gap-2 text-[12px] font-bold text-dd-muted">
               <span>すべてのツール</span>
+              <span className="rounded-full bg-white/10 px-2 py-0.5 text-[9.5px]">
+                {tl.tools.length}
+              </span>
               <span className="h-px flex-1 bg-white/10" />
               <span className="text-[10px]">Shift + クリックでブラウザ</span>
+              <button
+                onClick={() => setEditing('new')}
+                className="rounded-lg bg-gradient-to-br from-dd-accent to-dd-accent2 px-3 py-1.5 text-[11px] font-semibold text-white transition hover:brightness-110"
+              >
+                ＋ 追加
+              </button>
             </h2>
 
             <div className="mb-4 flex flex-wrap gap-1.5">
@@ -207,15 +228,74 @@ export default function Home({ onOpenInApp }: Props) {
 
             <div className="grid grid-cols-4 gap-3 sm:grid-cols-6">
               {listed.map((t) => (
-                <ToolTile
-                  key={t.id}
-                  tool={t}
-                  isFavorite={favorites.includes(t.id)}
-                  onOpen={openTool}
-                  onToggleFavorite={toggleFavorite}
-                />
+                <div key={t.id} className="group/edit relative">
+                  <ToolTile
+                    tool={t}
+                    isFavorite={favorites.includes(t.id)}
+                    onOpen={openTool}
+                    onToggleFavorite={toggleFavorite}
+                  />
+
+                  {/* 編集 */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setEditing(t);
+                    }}
+                    title="編集する"
+                    className="absolute left-1 top-1 grid h-6 w-6 place-items-center rounded-lg text-[10px] text-dd-muted opacity-0 transition hover:bg-white/15 group-hover/edit:opacity-100"
+                  >
+                    ✎
+                  </button>
+
+                  {/* 一覧から外す */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (window.confirm(`${t.name} を一覧から外しますか。`)) {
+                        tl.removeTool(t.id);
+                      }
+                    }}
+                    title="一覧から外す"
+                    className="absolute bottom-1 right-1 grid h-6 w-6 place-items-center rounded-lg text-[10px] text-dd-muted opacity-0 transition hover:bg-dd-ng/25 hover:text-dd-text group-hover/edit:opacity-100"
+                  >
+                    ✕
+                  </button>
+                </div>
               ))}
             </div>
+
+            {/* 外したツールを戻す */}
+            {tl.hiddenTools.length > 0 && (
+              <div className="mt-4">
+                <button
+                  onClick={() => setShowHidden((v) => !v)}
+                  className="text-[11px] text-dd-muted transition hover:text-dd-text"
+                >
+                  {showHidden ? '▾' : '▸'} 一覧から外したツール（{tl.hiddenTools.length}）
+                </button>
+
+                {showHidden && (
+                  <div className="mt-2.5 flex flex-wrap gap-2">
+                    {tl.hiddenTools.map((t) => (
+                      <button
+                        key={t.id}
+                        onClick={() => tl.restoreTool(t.id)}
+                        className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/[0.04] px-3 py-1.5 text-[11px] transition hover:bg-white/[0.1]"
+                      >
+                        <span
+                          className={`grid h-5 w-5 place-items-center rounded bg-gradient-to-br text-[10px] text-white ${t.color}`}
+                        >
+                          {t.icon}
+                        </span>
+                        {t.name}
+                        <span className="text-[10px] text-dd-muted">戻す</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
           </section>
         </div>
 
@@ -225,10 +305,22 @@ export default function Home({ onOpenInApp }: Props) {
         </aside>
       </div>
 
+      {/* ---------- ツールの追加・編集 ---------- */}
+      {editing && (
+        <ToolEditor
+          target={editing === 'new' ? null : editing}
+          onClose={() => setEditing(null)}
+          onSave={(value) => {
+            if (editing === 'new') tl.addTool(value);
+            else tl.updateTool(editing.id, value);
+          }}
+        />
+      )}
+
       {/* ---------- 起動メッセージ ---------- */}
-      {message && (
+      {(message || tl.message) && (
         <div className="fixed bottom-7 left-1/2 z-50 -translate-x-1/2 animate-fade-in rounded-xl border border-white/10 bg-dd-panel/95 px-5 py-3 text-[12.5px] shadow-2xl backdrop-blur-[18px]">
-          {message}
+          {message || tl.message}
         </div>
       )}
     </div>

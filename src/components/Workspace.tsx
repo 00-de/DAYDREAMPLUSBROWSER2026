@@ -11,11 +11,17 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import PaneWindow from './PaneWindow';
 import { useWorkspace, zoneToRect } from '../hooks/useWorkspace';
-import { TOOLS, findTool } from '../lib/tools';
+import { useTools } from '../hooks/useTools';
+import { useAuth } from '../hooks/useAuth';
+import { useGroup } from '../hooks/useGroup';
 import { loadLocal } from '../lib/storage';
 import type { SnapZone, Tool } from '../types';
 
 export default function Workspace() {
+  const { user } = useAuth();
+  const { scopePath } = useGroup(user);
+  const { tools: TOOLS, findTool } = useTools(user, scopePath);
+
   const ws = useWorkspace();
   const canvasRef = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState({ w: 1000, h: 600 });
